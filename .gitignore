@@ -40,3 +40,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### yonsei-lecture-finding-supporter ###
+.idea
+
