@@ -1,21 +1,29 @@
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "1.9.22" apply false
 }
 
-group = "gitp"
-version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
+allprojects {
+    group = "gitp"
+    version = "1.0-SNAPSHOT"
+}
+subprojects {
+    repositories {
+        mavenCentral()
+    }
 }
 
-dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(21)
-}
+//repositories {
+//    mavenCentral()
+//}
+//
+//dependencies {
+//    testImplementation("org.jetbrains.kotlin:kotlin-test")
+//}
+//
+//tasks.test {
+//    useJUnitPlatform()
+//}
+//kotlin {
+//    jvmToolchain(21)
+//}
