@@ -43,4 +43,5 @@ bin/
 
 ### yonsei-lecture-finding-supporter ###
 .idea
+**/test/**/sandbox/
 
