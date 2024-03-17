@@ -1,5 +1,6 @@
 package gitp.scrapingbatch.request.payload.resolver
 
+import gitp.scrapingbatch.request.payload.resolver.type.Day
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
 

@@ -1,6 +1,6 @@
-package gitp.scrapingbatch.request.payload.resolver
+package gitp.scrapingbatch.request.payload.resolver.type
 
-enum class Day(val koreanCode: String){
+enum class Day(val koreanCode: String) {
     MON("월"),
     TUE("화"),
     WEN("수"),
@@ -11,8 +11,8 @@ enum class Day(val koreanCode: String){
 
     companion object {
         fun of(koreanCode: String): Day {
-            for(entry in entries) {
-                if(entry.koreanCode == koreanCode) {
+            for (entry in entries) {
+                if (entry.koreanCode == koreanCode) {
                     return entry
                 }
             }

@@ -1,5 +1,7 @@
 package gitp.scrapingbatch.request.payload.resolver
 
+import gitp.scrapingbatch.request.payload.resolver.type.Day
+
 /**
  * form of period in json response has some forms
  * form1: 월1,2(수3,4)
