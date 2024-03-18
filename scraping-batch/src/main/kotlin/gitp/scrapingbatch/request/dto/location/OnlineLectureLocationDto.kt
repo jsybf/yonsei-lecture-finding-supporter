@@ -1,5 +1,6 @@
-package gitp.scrapingbatch.request.dto
+package gitp.scrapingbatch.request.dto.location
 
+import gitp.scrapingbatch.request.dto.location.LectureLocationDto
 import gitp.type.OnlineLectureType
 
 data class OnlineLectureLocationDto(
