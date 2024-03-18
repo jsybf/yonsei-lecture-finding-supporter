@@ -17,7 +17,7 @@ class LocationResolverTest {
         val sample5 = "동영상콘텐츠/외01"
 
 
-        assertThat(LocationResolver.resolve(sample1))
+        assertThat(Resolvers.resolveLocation(sample1))
             .hasSize(2)
             .containsSequence(
                 OfflineLectureLocationDto(
@@ -29,7 +29,7 @@ class LocationResolverTest {
                     "232"
                 )
             )
-        assertThat(LocationResolver.resolve(sample2))
+        assertThat(Resolvers.resolveLocation(sample2))
             .hasSize(2)
             .containsSequence(
                 OfflineLectureLocationDto(
@@ -41,7 +41,7 @@ class LocationResolverTest {
                     false
                 )
             )
-        assertThat(LocationResolver.resolve(sample3))
+        assertThat(Resolvers.resolveLocation(sample3))
             .hasSize(1)
             .containsSequence(
                 OfflineLectureLocationDto(
@@ -49,7 +49,7 @@ class LocationResolverTest {
                     "B110"
                 ),
             )
-        assertThat(LocationResolver.resolve(sample4))
+        assertThat(Resolvers.resolveLocation(sample4))
             .hasSize(3)
             .containsSequence(
                 OnlineLectureLocationDto(
@@ -65,7 +65,7 @@ class LocationResolverTest {
                     "B110"
                 ),
             )
-        assertThat(LocationResolver.resolve(sample5))
+        assertThat(Resolvers.resolveLocation(sample5))
             .hasSize(2)
             .containsSequence(
                 OnlineLectureLocationDto(

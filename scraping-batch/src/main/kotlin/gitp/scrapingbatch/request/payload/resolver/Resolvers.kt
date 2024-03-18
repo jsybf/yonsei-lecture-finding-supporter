@@ -3,11 +3,38 @@ package gitp.scrapingbatch.request.payload.resolver
 import gitp.scrapingbatch.request.payload.resolver.dto.LectureLocationDto
 import gitp.scrapingbatch.request.payload.resolver.dto.OfflineLectureLocationDto
 import gitp.scrapingbatch.request.payload.resolver.dto.OnlineLectureLocationDto
+import gitp.scrapingbatch.request.payload.resolver.dto.PeriodAndLocationDto
+import gitp.scrapingbatch.request.payload.resolver.type.Day
 import gitp.scrapingbatch.request.payload.resolver.type.OnlineLectureType
 import gitp.scrapingbatch.request.payload.resolver.type.YonseiBuilding
 
-object LocationResolver {
-    fun resolve(raw: String): List<LectureLocationDto> {
+object Resolvers {
+
+    fun resolvePeriodAndLocation(
+        rawPeriod: String,
+        rawLocation: String
+    ): List<PeriodAndLocationDto> {
+        val resolvedLocation: List<LectureLocationDto> = resolveLocation(rawLocation)
+        val resolvedPeriod: List<Pair<Day, Set<Int>>> = resolvePeriod(rawPeriod)
+
+        if (resolvedLocation.size != resolvedPeriod.size) {
+            throw IllegalStateException(
+                "size of resolvedLocation(:${resolvedLocation.size} != size of resolvedPeriod" +
+                        "(:${resolvedPeriod.size}"
+            )
+        }
+
+        return resolvedLocation.indices
+            .map {
+                PeriodAndLocationDto(
+                    resolvedLocation[it],
+                    resolvedPeriod[it].first,
+                    resolvedPeriod[it].second
+                )
+            }.toList()
+    }
+
+    fun resolveLocation(raw: String): List<LectureLocationDto> {
         val locationGroupExtractor: Regex = Regex("""[가-힣a-zA-Z0-9]+""")
         val ifOnlyKorean: Regex = Regex("""^[가-힣]+$""")
         val commonAddress: Regex = Regex(
@@ -22,6 +49,8 @@ object LocationResolver {
         val locationResultList: MutableList<LectureLocationDto> = mutableListOf()
 
         for (chunk in locationChunkList) {
+            //when clause doesn't work like if-elseif
+            //it works like if-if
             when {
                 chunk == "동영상콘텐츠" || chunk == "실시간콘텐츠" || chunk == "동영상" -> {
                     locationResultList.add(
@@ -82,4 +111,42 @@ object LocationResolver {
         } // for scope end
         return locationResultList
     }
+
+    /**
+     * form of period in json response has some forms
+     * form1: 월1,2(수3,4)
+     * form2: 월1,2/목2
+     * form3: 월1,2/(목2)/금3
+     */
+
+    fun resolvePeriod(raw: String): List<Pair<Day, Set<Int>>> {
+        val periodGroupExtractor: Regex = Regex("""[가-힣]([0-9]+,?)+""")
+        val dayExtractor: Regex = Regex("""[월화수목금토일]""")
+        val periodExtractor: Regex = Regex("""[0-9]+""")
+
+        val periodGroupList = periodGroupExtractor.findAll(raw).map { it.value }.toList()
+
+        val periodMap: MutableMap<Day, MutableSet<Int>> = mutableMapOf()
+        val periodList: MutableList<Pair<Day, Set<Int>>> = mutableListOf()
+
+        for (refinedPeriod in periodGroupList) {
+            val day: Day = Day.of(
+                dayExtractor
+                    .find(refinedPeriod)
+                    ?.value
+                    ?: throw IllegalStateException(
+                        "unexpected day symbol. input: [$raw] only 월화수목금토일 is allowed"
+                    )
+            )
+            val periodSet: MutableSet<Int> = periodExtractor
+                .findAll(refinedPeriod)
+                .map { it.value.toInt() }
+                .toMutableSet()
+
+            periodList.add(Pair(day, periodSet))
+        }
+
+        return periodList
+    }
+
 }
