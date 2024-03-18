@@ -1,6 +1,5 @@
-package gitp.scrapingbatch.request.dto.location
+package gitp.scrapingbatch.dto.location
 
-import gitp.scrapingbatch.request.dto.location.LectureLocationDto
 import gitp.type.YonseiBuilding
 
 data class OfflineLectureLocationDto(

@@ -1,4 +1,4 @@
-package gitp.scrapingbatch.request.dto
+package gitp.scrapingbatch.dto
 
 data class LectureIdDto(
     val id: Long?,

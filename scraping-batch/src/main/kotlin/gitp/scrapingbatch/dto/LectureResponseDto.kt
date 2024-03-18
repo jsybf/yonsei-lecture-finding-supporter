@@ -1,9 +1,8 @@
-package gitp.scrapingbatch.request.dto
+package gitp.scrapingbatch.dto
 
-import gitp.entity.LectureId
+import gitp.scrapingbatch.dto.location.PeriodAndLocationDto
 
-data class LectureDto(
-    val id: Long?,
+data class LectureResponseDto(
     val name: String,
     val professor: ProfessorDto,
     val lectureId: LectureIdDto,
