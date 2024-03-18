@@ -1,6 +1,6 @@
 package gitp.scrapingbatch.request.payload.resolver
 
-import gitp.scrapingbatch.request.resolver.Resolvers
+import gitp.scrapingbatch.request.objectmapper.resolver.Resolvers
 import gitp.type.Day
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy

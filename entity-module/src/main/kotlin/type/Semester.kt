@@ -1,4 +1,4 @@
-package gitp.yonseiprotohttp.payload.type
+package gitp.type
 
 enum class Semester(val code: Int) {
     FIRST(10),

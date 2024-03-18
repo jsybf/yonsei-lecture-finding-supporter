@@ -1,4 +1,4 @@
-package gitp.scrapingbatch.dto.location
+package gitp.scrapingbatch.dto.response.location
 
 /**
  * just marker interface for LocationDto

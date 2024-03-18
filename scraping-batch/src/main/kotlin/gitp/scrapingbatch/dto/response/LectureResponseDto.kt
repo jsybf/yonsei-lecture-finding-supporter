@@ -1,6 +1,6 @@
-package gitp.scrapingbatch.dto
+package gitp.scrapingbatch.dto.response
 
-import gitp.scrapingbatch.dto.location.PeriodAndLocationDto
+import gitp.scrapingbatch.dto.response.location.PeriodAndLocationDto
 
 data class LectureResponseDto(
     val name: String,

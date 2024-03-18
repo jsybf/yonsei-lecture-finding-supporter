@@ -1,4 +1,4 @@
-package gitp.scrapingbatch.request.payload
+package gitp.scrapingbatch.request
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode

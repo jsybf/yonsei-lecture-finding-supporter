@@ -1,6 +1,6 @@
-package gitp.yonseiprotohttp.payload.dto
+package gitp.scrapingbatch.dto.payload
 
-import gitp.yonseiprotohttp.payload.type.Semester
+import gitp.type.Semester
 import java.time.Year
 
 class SubjectPayloadDto(

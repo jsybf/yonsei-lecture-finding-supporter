@@ -1,8 +1,8 @@
 package gitp.scrapingbatch.request.payload.resolver
 
-import gitp.scrapingbatch.dto.location.OfflineLectureLocationDto
-import gitp.scrapingbatch.dto.location.OnlineLectureLocationDto
-import gitp.scrapingbatch.request.resolver.Resolvers
+import gitp.scrapingbatch.dto.response.location.OfflineLectureLocationDto
+import gitp.scrapingbatch.dto.response.location.OnlineLectureLocationDto
+import gitp.scrapingbatch.request.objectmapper.resolver.Resolvers
 import gitp.type.OnlineLectureType
 import gitp.type.YonseiBuilding
 import org.assertj.core.api.Assertions.assertThat
