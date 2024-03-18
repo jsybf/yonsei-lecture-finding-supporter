@@ -60,6 +60,7 @@ class YonseiHttpClient<T : Any>(
             )
         }
     }
+
     fun retrieveAndMap(payloads: String): T {
         val response: String = retrieve(payloads)
         val responseJson: JsonNode = objectMapper.readTree(response)
