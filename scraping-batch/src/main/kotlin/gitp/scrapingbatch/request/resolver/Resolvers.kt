@@ -1,9 +1,9 @@
-package gitp.scrapingbatch.request.payload.resolver
+package gitp.scrapingbatch.request.resolver
 
-import gitp.scrapingbatch.request.payload.resolver.dto.LectureLocationDto
-import gitp.scrapingbatch.request.payload.resolver.dto.OfflineLectureLocationDto
-import gitp.scrapingbatch.request.payload.resolver.dto.OnlineLectureLocationDto
-import gitp.scrapingbatch.request.payload.resolver.dto.PeriodAndLocationDto
+import gitp.scrapingbatch.request.dto.LectureLocationDto
+import gitp.scrapingbatch.request.dto.OfflineLectureLocationDto
+import gitp.scrapingbatch.request.dto.OnlineLectureLocationDto
+import gitp.scrapingbatch.request.dto.PeriodAndLocationDto
 import gitp.type.Day
 import gitp.type.OnlineLectureType
 import gitp.type.YonseiBuilding
