@@ -1,4 +1,4 @@
-package gitp.scrapingbatch.request.payload.resolver.type
+package gitp.type
 
 enum class Day(val koreanCode: String) {
     MON("월"),

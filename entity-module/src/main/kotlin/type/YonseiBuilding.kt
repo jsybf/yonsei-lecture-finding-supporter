@@ -1,4 +1,4 @@
-package gitp.scrapingbatch.request.payload.resolver.type
+package gitp.type
 
 @Suppress("SpellCheckingInspection")
 enum class YonseiBuilding(val koreanCode: String) {

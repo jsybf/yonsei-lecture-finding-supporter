@@ -4,9 +4,9 @@ import gitp.scrapingbatch.request.payload.resolver.dto.LectureLocationDto
 import gitp.scrapingbatch.request.payload.resolver.dto.OfflineLectureLocationDto
 import gitp.scrapingbatch.request.payload.resolver.dto.OnlineLectureLocationDto
 import gitp.scrapingbatch.request.payload.resolver.dto.PeriodAndLocationDto
-import gitp.scrapingbatch.request.payload.resolver.type.Day
-import gitp.scrapingbatch.request.payload.resolver.type.OnlineLectureType
-import gitp.scrapingbatch.request.payload.resolver.type.YonseiBuilding
+import gitp.type.Day
+import gitp.type.OnlineLectureType
+import gitp.type.YonseiBuilding
 
 object Resolvers {
 

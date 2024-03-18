@@ -1,6 +1,6 @@
 package gitp.scrapingbatch.request.payload.resolver.dto
 
-import gitp.scrapingbatch.request.payload.resolver.type.Day
+import gitp.type.Day
 
 data class PeriodAndLocationDto(
     val locationDto: LectureLocationDto,

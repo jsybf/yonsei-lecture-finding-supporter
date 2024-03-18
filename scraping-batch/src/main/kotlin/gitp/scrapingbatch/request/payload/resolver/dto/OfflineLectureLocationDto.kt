@@ -1,6 +1,6 @@
 package gitp.scrapingbatch.request.payload.resolver.dto
 
-import gitp.scrapingbatch.request.payload.resolver.type.YonseiBuilding
+import gitp.type.YonseiBuilding
 
 data class OfflineLectureLocationDto(
     val building: YonseiBuilding,

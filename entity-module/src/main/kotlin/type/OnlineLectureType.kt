@@ -1,4 +1,4 @@
-package gitp.scrapingbatch.request.payload.resolver.type
+package gitp.type
 
 enum class OnlineLectureType(vararg koreanCodes: String) {
     VIDEO("동영상콘텐츠", "동영상"),

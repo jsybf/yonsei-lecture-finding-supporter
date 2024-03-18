@@ -21,6 +21,8 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.batch:spring-batch-test")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.+")
+
+    implementation(project(":entity-module"))
 }
 
 tasks.withType<KotlinCompile> {

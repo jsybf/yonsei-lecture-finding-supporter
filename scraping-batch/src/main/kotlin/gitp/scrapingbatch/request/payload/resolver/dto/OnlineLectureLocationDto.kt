@@ -1,6 +1,6 @@
 package gitp.scrapingbatch.request.payload.resolver.dto
 
-import gitp.scrapingbatch.request.payload.resolver.type.OnlineLectureType
+import gitp.type.OnlineLectureType
 
 data class OnlineLectureLocationDto(
     val type: OnlineLectureType,
