@@ -20,6 +20,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.batch:spring-batch-test")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    runtimeOnly("org.postgresql:postgresql")
     runtimeOnly("com.h2database:h2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.+")
 

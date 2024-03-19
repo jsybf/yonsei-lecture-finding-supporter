@@ -7,7 +7,7 @@ class Lecture(
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     val id: Long?,
 
-    @Column(length = 60)
+    @Column(length = 100)
     val name: String?,
 
     @ManyToOne
