@@ -16,6 +16,7 @@ class LocationResolverTest {
         val sample3 = "상본B110"
         val sample4 = "동영상(중복수강불가)/(상본B103)/상본B110"
         val sample5 = "동영상콘텐츠/외01"
+        val sample6 = "백S202(백S221)"
 
 
         assertThat(Resolvers.resolveLocation(sample1))
@@ -77,6 +78,18 @@ class LocationResolverTest {
                     YonseiBuilding.OESOL,
                     "01"
                 )
+            )
+        assertThat(Resolvers.resolveLocation(sample6))
+            .hasSize(2)
+            .containsSequence(
+                OfflineLectureLocationDto(
+                    YonseiBuilding.BAEGYANG_S,
+                    "202"
+                ),
+                OfflineLectureLocationDto(
+                    YonseiBuilding.BAEGYANG_S,
+                    "221"
+                ),
             )
     }
 }

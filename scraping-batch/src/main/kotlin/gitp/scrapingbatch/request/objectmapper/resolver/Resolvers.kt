@@ -60,8 +60,8 @@ object Resolvers {
         val locationResultList: MutableList<LectureLocationDto> = mutableListOf()
 
         for (chunk in locationChunkList) {
-            //when clause doesn't work like if-elseif
-            //it works like if-if
+            // when clause doesn't work like if-elseif
+            // it works like if-if
             when {
                 chunk == "동영상콘텐츠" || chunk == "실시간콘텐츠" || chunk == "동영상" -> {
                     locationResultList.add(
@@ -87,8 +87,11 @@ object Resolvers {
                         .find(chunk)
                         ?.groups
                         ?: throw IllegalStateException("unexpected form(input:$chunk)"))
-                    if (matchGroup["buildingName"]!!.value == "공"
-                        && matchGroup["buildingNameOrB"]!!.value == "B"
+                    if (
+                        (matchGroup["buildingName"]!!.value == "공" &&
+                                matchGroup["buildingNameOrB"]!!.value == "B") ||
+                        (matchGroup["buildingName"]!!.value == "백" &&
+                                matchGroup["buildingNameOrB"]!!.value == "S")
                     ) {
                         buildingName =
                             matchGroup["buildingName"]!!.value + matchGroup["buildingNameOrB"]!!.value
