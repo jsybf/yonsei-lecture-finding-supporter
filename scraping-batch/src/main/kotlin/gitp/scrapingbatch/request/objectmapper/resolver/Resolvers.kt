@@ -18,9 +18,20 @@ object Resolvers {
         val resolvedPeriod: List<Pair<Day, Set<Int>>> = resolvePeriod(rawPeriod)
 
         if (resolvedLocation.size != resolvedPeriod.size) {
+            if (resolvedLocation.size == 1) {
+                return resolvedPeriod.indices
+                    .map {
+                        PeriodAndLocationDto(
+                            resolvedLocation[0],
+                            resolvedPeriod[it].first,
+                            resolvedPeriod[it].second
+                        )
+                    }
+                    .toList()
+            }
             throw IllegalStateException(
-                "size of resolvedLocation(:${resolvedLocation.size} != size of resolvedPeriod" +
-                        "(:${resolvedPeriod.size}"
+                "size of resolvedLocation(${resolvedLocation.size}) != size of resolvedPeriod" +
+                        "(:${resolvedPeriod.size})"
             )
         }
 
@@ -109,7 +120,7 @@ object Resolvers {
                 else -> throw IllegalStateException("(input:$chunk) doesn't matched cases")
             } // when scope end
         } // for scope end
-        return locationResultList
+        return locationResultList.distinct()
     }
 
     /**
