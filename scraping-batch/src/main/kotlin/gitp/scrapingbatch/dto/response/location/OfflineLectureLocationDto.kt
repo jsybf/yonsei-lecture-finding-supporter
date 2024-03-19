@@ -5,7 +5,7 @@ import gitp.type.YonseiBuilding
 
 data class OfflineLectureLocationDto(
     val building: YonseiBuilding,
-    val address: String
+    val address: String?
 ) : LectureLocationDto {
     fun toEntity(): OfflineLectureLocation {
         return OfflineLectureLocation(

@@ -7,16 +7,32 @@ import org.springframework.data.repository.query.Param
 
 interface OnlineLectureLocationRepository : JpaRepository<OnlineLectureLocation, Long?> {
 
-    @Query("""
+    @Query(
+        """
         SELECT COUNT(ol) > 0
         FROM OnlineLectureLocation as ol
         WHERE 
             ol.overlapAllowed = :#{#onlineLectureLocation.overlapAllowed} AND 
             ol.type = :#{#onlineLectureLocation.type}
-    """)
+    """
+    )
     fun existsByContent(
         @Param("onlineLectureLocation")
         onlineLectureLocation: OnlineLectureLocation
     ): Boolean
+
+    @Query(
+        """
+        SELECT ol
+        FROM OnlineLectureLocation as ol
+        WHERE 
+            ol.overlapAllowed = :#{#onlineLectureLocation.overlapAllowed} AND 
+            ol.type = :#{#onlineLectureLocation.type}
+    """
+    )
+    fun findByContent(
+        @Param("onlineLectureLocation")
+        onlineLectureLocation: OnlineLectureLocation
+    ): OnlineLectureLocation?
 
 }
