@@ -11,6 +11,6 @@ class LectureTime(
     val lectureLocation: LectureLocation,
 
     @ManyToOne
-    val lectureTime: LectureTime?
+    val lecture: Lecture?
 ) {
 }
