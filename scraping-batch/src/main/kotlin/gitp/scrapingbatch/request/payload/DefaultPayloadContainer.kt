@@ -33,7 +33,7 @@ object DefaultPayloadContainer {
         "%40d1%23engChg" to "",
         "%40d1%23prnGbn" to "false",
         "%40d1%23lang" to "",
-        "%40d1%23campsDivCd" to "",
+        "%40d1%23campsDivCd" to "S",
         "%40d1%23stuno" to ""
     )
 
