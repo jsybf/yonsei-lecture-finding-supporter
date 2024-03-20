@@ -3,7 +3,7 @@ package gitp.yonseiprotohttp.payload
 import gitp.scrapingbatch.dto.payload.DptGroupPayloadDto
 import gitp.scrapingbatch.dto.payload.DptPayloadDto
 import gitp.scrapingbatch.dto.payload.PayloadDto
-import gitp.scrapingbatch.dto.payload.SubjectPayloadDto
+import gitp.scrapingbatch.dto.payload.LecturePayloadDto
 import gitp.type.Semester
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -56,9 +56,10 @@ class PayloadBuilderTest {
     @Test
     fun subject_payload_build_test() {
         val targetPayload: String =
-            "_menuId=MTA5MzM2MTI3MjkzMTI2NzYwMDA%3D&_menuNm=&_pgmId=NDE0MDA4NTU1NjY%3D&%40d1%23syy=2024&%40d1%23smtDivCd=10&%40d1%23campsBusnsCd=s1&%40d1%23univCd=s11001&%40d1%23faclyCd=30109&%40d1%23hy=&%40d1%23cdt=%25&%40d1%23kwdDivCd=1&%40d1%23searchGbn=1&%40d1%23kwd=&%40d1%23allKwd=&%40d1%23engChg=&%40d1%23prnGbn=false&%40d1%23lang=&%40d1%23campsDivCd=&%40d1%23stuno=&%40d%23=%40d1%23&%40d1%23=dmCond&%40d1%23tp=dm"
+            "_menuId=MTA5MzM2MTI3MjkzMTI2NzYwMDA%3D&_menuNm=&_pgmId=NDE0MDA4NTU1NjY%3D&%40d1" +
+                    "%23syy=2024&%40d1%23smtDivCd=10&%40d1%23campsBusnsCd=s1&%40d1%23univCd=s11001&%40d1%23faclyCd=30109&%40d1%23hy=&%40d1%23cdt=%25&%40d1%23kwdDivCd=1&%40d1%23searchGbn=1&%40d1%23kwd=&%40d1%23allKwd=&%40d1%23engChg=&%40d1%23prnGbn=false&%40d1%23lang=&%40d1%23campsDivCd=S&%40d1%23stuno=&%40d%23=%40d1%23&%40d1%23=dmCond&%40d1%23tp=dm"
 
-        val dto = SubjectPayloadDto(
+        val dto = LecturePayloadDto(
             Year.of(2024),
             Semester.FIRST,
             "s11001",

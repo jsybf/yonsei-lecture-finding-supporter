@@ -3,7 +3,7 @@ package gitp.scrapingbatch.dto.payload
 import gitp.type.Semester
 import java.time.Year
 
-class SubjectPayloadDto(
+class LecturePayloadDto(
     val year: Year,
     val semester: Semester,
     val dptGroupId: String,

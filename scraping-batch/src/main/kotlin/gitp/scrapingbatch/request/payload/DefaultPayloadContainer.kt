@@ -22,7 +22,7 @@ object DefaultPayloadContainer {
         "%40d1%23sysinstDivCd" to "%25"
     )
 
-    val subjectPayload: Map<String, String> = mapOf(
+    val lecturePayload: Map<String, String> = mapOf(
         "%40d1%23campsBusnsCd" to "s1",
         "%40d1%23hy" to "",
         "%40d1%23cdt" to "%25",

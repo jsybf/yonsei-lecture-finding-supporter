@@ -3,7 +3,7 @@ package gitp.yonseiprotohttp.payload
 import gitp.scrapingbatch.dto.payload.DptGroupPayloadDto
 import gitp.scrapingbatch.dto.payload.DptPayloadDto
 import gitp.scrapingbatch.dto.payload.PayloadDto
-import gitp.scrapingbatch.dto.payload.SubjectPayloadDto
+import gitp.scrapingbatch.dto.payload.LecturePayloadDto
 
 object PayloadBuilder {
 
@@ -11,7 +11,7 @@ object PayloadBuilder {
         val defaultPayload: Map<String, String> = when (dto) {
             is DptGroupPayloadDto -> DefaultPayloadContainer.dptGroupPayload
             is DptPayloadDto -> DefaultPayloadContainer.dtpPayload
-            is SubjectPayloadDto -> DefaultPayloadContainer.subjectPayload
+            is LecturePayloadDto -> DefaultPayloadContainer.lecturePayload
             else -> {
                 throw IllegalArgumentException("type of dto: ${dto::class}")
             }

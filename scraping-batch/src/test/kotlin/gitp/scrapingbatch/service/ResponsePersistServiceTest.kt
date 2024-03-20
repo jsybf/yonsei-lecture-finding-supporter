@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import gitp.scrapingbatch.dto.payload.SubjectPayloadDto
+import gitp.scrapingbatch.dto.payload.LecturePayloadDto
 import gitp.scrapingbatch.dto.response.LectureResponseDto
 import gitp.scrapingbatch.request.YonseiHttpClient
 import gitp.scrapingbatch.request.objectmapper.LectureResponseObjectMapper
@@ -41,7 +41,7 @@ class ResponsePersistServiceTest @Autowired constructor(
                 jsonNode.path("dsSles251")
             }
 
-        val payloadDto: SubjectPayloadDto = SubjectPayloadDto(
+        val payloadDto: LecturePayloadDto = LecturePayloadDto(
             Year.of(2024),
             Semester.FIRST,
             "s11001",

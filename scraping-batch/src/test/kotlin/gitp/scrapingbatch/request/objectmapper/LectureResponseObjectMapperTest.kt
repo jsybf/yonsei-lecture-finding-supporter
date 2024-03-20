@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import gitp.scrapingbatch.dto.payload.SubjectPayloadDto
+import gitp.scrapingbatch.dto.payload.LecturePayloadDto
 import gitp.scrapingbatch.dto.response.LectureIdDto
 import gitp.scrapingbatch.dto.response.LectureResponseDto
 import gitp.scrapingbatch.dto.response.ProfessorDto
@@ -46,7 +46,7 @@ class LectureResponseObjectMapperTest {
                 jsonNode.path("dsSles251")
             }
 
-        val payloadDto: SubjectPayloadDto = SubjectPayloadDto(
+        val payloadDto: LecturePayloadDto = LecturePayloadDto(
             Year.of(2024),
             Semester.FIRST,
             "s11001",
@@ -83,7 +83,7 @@ class LectureResponseObjectMapperTest {
         lectureResponseDtoList.forEach { println(it) }
         Assertions.assertThat(lectureResponseDtoList)
             .contains(
-                //TODO: testSampleData contains 4 objects but only wrote assertions for 2
+                // TODO: testSampleData contains 4 objects but only wrote assertions for 2
                 // objects, add other 2 objects to assertions
                 LectureResponseDto(
                     "영화의이해",
