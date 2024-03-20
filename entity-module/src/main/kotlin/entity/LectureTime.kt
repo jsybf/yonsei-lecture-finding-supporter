@@ -9,7 +9,7 @@ class LectureTime(
     val id: Long?,
 
     @Enumerated(value = EnumType.STRING)
-    val day: Day?,
+    val day: Day,
 
     val startPeriod: Int,
 

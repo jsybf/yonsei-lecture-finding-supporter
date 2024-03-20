@@ -8,6 +8,6 @@ class Professor(
     val id: Long?,
 
     @Column(length = 30)
-    val name: String?
+    val name: String
 ) {
 }

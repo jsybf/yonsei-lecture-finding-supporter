@@ -2,6 +2,8 @@ package gitp.scrapingbatch.service
 
 import gitp.entity.Lecture
 import gitp.entity.LectureTime
+import gitp.entity.OfflineLectureLocation
+import gitp.entity.OnlineLectureLocation
 import gitp.scrapingbatch.dto.response.LectureResponseDto
 import gitp.scrapingbatch.dto.response.location.OfflineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.OnlineLectureLocationDto
@@ -43,8 +45,8 @@ class ResponsePersistService(
             when (periodAndLocationDto.locationDto) {
 
                 is OfflineLectureLocationDto -> {
-                    val entity =
-                        (periodAndLocationDto.locationDto as OfflineLectureLocationDto).toEntity()
+                    val entity: OfflineLectureLocation =
+                        periodAndLocationDto.locationDto.toEntity()
 
                     if (!offlineLectureLocationRepository.existsByContent(entity)) {
                         offlineLectureLocationRepository.save(entity)
@@ -52,8 +54,8 @@ class ResponsePersistService(
                 }
 
                 is OnlineLectureLocationDto -> {
-                    val entity =
-                        (periodAndLocationDto.locationDto as OnlineLectureLocationDto).toEntity()
+                    val entity: OnlineLectureLocation =
+                        periodAndLocationDto.locationDto.toEntity()
 
                     if (!onlineLectureLocationRepository.existsByContent(entity)) {
                         onlineLectureLocationRepository.save(entity)
