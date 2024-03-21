@@ -4,25 +4,33 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import gitp.entity.Dpt
+import gitp.entity.DptGroup
 import gitp.scrapingbatch.dto.payload.DptPayloadDto
-import gitp.scrapingbatch.dto.response.DptGroupResponseDto
 import gitp.scrapingbatch.dto.response.DptResponseDto
+import gitp.scrapingbatch.repository.DptGroupRepository
+import gitp.scrapingbatch.repository.DptRepository
 import gitp.scrapingbatch.request.YonseiHttpClient
 import gitp.type.Semester
 import gitp.yonseiprotohttp.payload.PayloadBuilder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.StepContribution
+import org.springframework.batch.core.StepExecution
+import org.springframework.batch.core.StepExecutionListener
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
-import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.core.RowMapper
-import java.sql.ResultSet
+import org.springframework.data.repository.findByIdOrNull
 import java.time.Year
 
 
-class DptRequestAndPersistTasklet(
-    private val jdbcTemplate: JdbcTemplate,
-) : Tasklet {
+open class DptRequestAndPersistTasklet(
+    private val dptGroupRepository: DptGroupRepository,
+    private val dptRepository: DptRepository,
+) : Tasklet, StepExecutionListener {
+    private val log: Logger = LoggerFactory.getLogger(DptRequestAndPersistTasklet::class.java)
     private val requestUrl: String =
         "https://underwood1.yonsei.ac.kr/sch/sles/SlescsCtr/findSchSlesHandbList.do"
 
@@ -34,34 +42,37 @@ class DptRequestAndPersistTasklet(
         jsonNode.path("dsFaclyCd")
     }
 
-    private var cursor: Int = 1
+    private var cursor: Long = 0L
 
-    private val query: String = """
-                    INSERT INTO dpt (dpt_name, dpt_id, dpt_group_id)
-                    values (?, ?, ?)
-                """.trimIndent()
+    // dptGroupCount is initialed not in construct-time but by beforeStep method
+    // since lateinit doesn't support val,I can't find solution to make it val
+    private var dptGroupCount: Long = 0
+    override fun beforeStep(stepExecution: StepExecution) {
+        dptGroupCount = dptGroupRepository.count()
+    }
 
-    val selectQuery: String = """
-            SELECT dpt_group_id, dpt_group_name 
-            FROM dpt_group
-            WHERE id = ?
-                """.trimIndent()
+    override fun afterStep(stepExecution: StepExecution): ExitStatus? {
+        log.info("completed dpt groups: ($cursor)/($dptGroupCount)")
+        return stepExecution.exitStatus
+    }
 
     override fun execute(
         contribution: StepContribution, chunkContext: ChunkContext
     ): RepeatStatus? {
 
-        val dptGroupResponseDto: DptGroupResponseDto = jdbcTemplate.query(
-            selectQuery, RowMapper<DptGroupResponseDto> { rs: ResultSet, rowNum: Int ->
-                DptGroupResponseDto(
-                    rs.getString("dpt_group_name"), rs.getString("dpt_group_id")
-                )
-            }, cursor++
-        ).takeIf { it.size == 1 }.let { it!![0] }
+        if (dptGroupCount == cursor) {
+            return RepeatStatus.FINISHED
+        }
+        val dptGroup: DptGroup = (dptGroupRepository.findByIdOrNull(++cursor)
+            ?: throw NoSuchElementException("cant find id with $cursor"))
+
+        log.info("request and persist dpts belong to (${dptGroup.dptGroupName})")
 
         val payloads = PayloadBuilder.toPayload(
             DptPayloadDto(
-                dptGroupResponseDto.dptGroupId, Year.of(2024), Semester.FIRST
+                dptGroup.dptGroupId,
+                Year.of(2024),
+                Semester.FIRST
             )
         )
         // TODO: exception handling if response is empty or response code isn't 200
@@ -69,8 +80,14 @@ class DptRequestAndPersistTasklet(
 
         // TODO: exception handling if jdbc throw exception
         for (dto in responseDtoList) {
-            jdbcTemplate.update(query, dto.dptName, dto.dptId, dptGroupResponseDto.dptGroupId)
-            println("insert $dto")
+            dptRepository.save(
+                Dpt(
+                    null,
+                    dto.dptName,
+                    dto.dptId,
+                    dptGroup
+                )
+            )
         }
         return RepeatStatus.CONTINUABLE
     }

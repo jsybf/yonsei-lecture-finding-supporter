@@ -2,6 +2,8 @@ package gitp.scrapingbatch.batch.config
 
 import gitp.scrapingbatch.batch.component.DptGroupRequestAndPersistTasklet
 import gitp.scrapingbatch.batch.component.DptRequestAndPersistTasklet
+import gitp.scrapingbatch.repository.DptGroupRepository
+import gitp.scrapingbatch.repository.DptRepository
 import gitp.type.Semester
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -14,7 +16,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.PlatformTransactionManager
 import java.time.Year
 
@@ -50,12 +51,13 @@ class JobConfig {
         year: String,
         @Value("#{jobParameters[semester]}")
         semester: String,
-        jdbcTemplate: JdbcTemplate
+        dptGroupRepository: DptGroupRepository
+
     ): Tasklet {
         return DptGroupRequestAndPersistTasklet(
             Year.parse(year),
             Semester.codeOf(semester.toInt()),
-            jdbcTemplate
+            dptGroupRepository
         )
     }
 
@@ -72,7 +74,7 @@ class JobConfig {
     @JobScope
     @Bean
     fun dptRequestAndPersistStep(
-        dptRequestAndPersistTasklet: Tasklet,
+        dptRequestAndPersistTasklet: DptRequestAndPersistTasklet,
         jobRepository: JobRepository,
         transactionManager: PlatformTransactionManager
     ): Step {
@@ -88,10 +90,12 @@ class JobConfig {
         year: String,
         @Value("#{jobParameters[semester]}")
         semester: String,
-        jdbcTemplate: JdbcTemplate
-    ): Tasklet {
+        dptGroupRepository: DptGroupRepository,
+        dptRepository: DptRepository
+    ): DptRequestAndPersistTasklet {
         return DptRequestAndPersistTasklet(
-            jdbcTemplate
+            dptGroupRepository,
+            dptRepository
         )
     }
 }
