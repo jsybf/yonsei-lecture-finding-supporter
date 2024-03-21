@@ -1,6 +1,7 @@
 package gitp.scrapingbatch.batch.config
 
 import gitp.scrapingbatch.batch.component.DptGroupRequestAndPersistTasklet
+import gitp.scrapingbatch.batch.component.DptRequestAndPersistTasklet
 import gitp.type.Semester
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -54,6 +55,42 @@ class JobConfig {
         return DptGroupRequestAndPersistTasklet(
             Year.parse(year),
             Semester.codeOf(semester.toInt()),
+            jdbcTemplate
+        )
+    }
+
+    @Bean
+    fun dptRequestAndPersistJob(
+        jobRepository: JobRepository,
+        dptRequestAndPersistStep: Step
+    ): Job {
+        return JobBuilder("dptRequestAndPersistJob", jobRepository)
+            .start(dptRequestAndPersistStep)
+            .build()
+    }
+
+    @JobScope
+    @Bean
+    fun dptRequestAndPersistStep(
+        dptRequestAndPersistTasklet: Tasklet,
+        jobRepository: JobRepository,
+        transactionManager: PlatformTransactionManager
+    ): Step {
+        return StepBuilder("dptRequestAndPersistStep", jobRepository)
+            .tasklet(dptRequestAndPersistTasklet, transactionManager)
+            .build()
+    }
+
+    @Bean
+    @StepScope
+    fun dptRequestAndPersistTasklet(
+        @Value("#{jobParameters[year]}")
+        year: String,
+        @Value("#{jobParameters[semester]}")
+        semester: String,
+        jdbcTemplate: JdbcTemplate
+    ): Tasklet {
+        return DptRequestAndPersistTasklet(
             jdbcTemplate
         )
     }
