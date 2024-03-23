@@ -1,6 +1,9 @@
 package gitp.scrapingbatch.batch.config
 
 import gitp.scrapingbatch.batch.component.DptGroupRequestAndPersistTasklet
+import gitp.scrapingbatch.batch.component.DptRequestAndPersistTasklet
+import gitp.scrapingbatch.repository.DptGroupRepository
+import gitp.scrapingbatch.repository.DptRepository
 import gitp.type.Semester
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -13,7 +16,6 @@ import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.PlatformTransactionManager
 import java.time.Year
 
@@ -49,12 +51,51 @@ class JobConfig {
         year: String,
         @Value("#{jobParameters[semester]}")
         semester: String,
-        jdbcTemplate: JdbcTemplate
+        dptGroupRepository: DptGroupRepository
+
     ): Tasklet {
         return DptGroupRequestAndPersistTasklet(
             Year.parse(year),
             Semester.codeOf(semester.toInt()),
-            jdbcTemplate
+            dptGroupRepository
+        )
+    }
+
+    @Bean
+    fun dptRequestAndPersistJob(
+        jobRepository: JobRepository,
+        dptRequestAndPersistStep: Step
+    ): Job {
+        return JobBuilder("dptRequestAndPersistJob", jobRepository)
+            .start(dptRequestAndPersistStep)
+            .build()
+    }
+
+    @JobScope
+    @Bean
+    fun dptRequestAndPersistStep(
+        dptRequestAndPersistTasklet: DptRequestAndPersistTasklet,
+        jobRepository: JobRepository,
+        transactionManager: PlatformTransactionManager
+    ): Step {
+        return StepBuilder("dptRequestAndPersistStep", jobRepository)
+            .tasklet(dptRequestAndPersistTasklet, transactionManager)
+            .build()
+    }
+
+    @Bean
+    @StepScope
+    fun dptRequestAndPersistTasklet(
+        @Value("#{jobParameters[year]}")
+        year: String,
+        @Value("#{jobParameters[semester]}")
+        semester: String,
+        dptGroupRepository: DptGroupRepository,
+        dptRepository: DptRepository
+    ): DptRequestAndPersistTasklet {
+        return DptRequestAndPersistTasklet(
+            dptGroupRepository,
+            dptRepository
         )
     }
 }
