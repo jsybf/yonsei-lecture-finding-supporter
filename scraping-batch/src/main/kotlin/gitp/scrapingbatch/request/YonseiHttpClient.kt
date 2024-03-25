@@ -36,7 +36,7 @@ import java.net.http.HttpResponse.BodyHandlers
  *          }
  *      ]
  */
-class YonseiHttpClient<T : Any>(
+class YonseiHttpClient<T : List<Any>>(
 //     using TypeReference<T> instead of Klass for Class because of
 //     type erasing when using Collection<T> (ex: List<fooDto>)
     private val typeReference: TypeReference<T>,
@@ -49,7 +49,7 @@ class YonseiHttpClient<T : Any>(
     private val log: Logger = LoggerFactory.getLogger(YonseiHttpClient::class.java)
 
     companion object {
-        inline fun <reified K : Any> of(
+        inline fun <reified K : List<Any>> of(
             url: String,
             objectMapper: ObjectMapper,
             skipPredicate: Map<String, String> = emptyMap(),
