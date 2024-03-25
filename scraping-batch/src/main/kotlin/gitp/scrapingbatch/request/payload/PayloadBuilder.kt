@@ -1,9 +1,6 @@
 package gitp.yonseiprotohttp.payload
 
-import gitp.scrapingbatch.dto.payload.DptGroupPayloadDto
-import gitp.scrapingbatch.dto.payload.DptPayloadDto
-import gitp.scrapingbatch.dto.payload.PayloadDto
-import gitp.scrapingbatch.dto.payload.LecturePayloadDto
+import gitp.scrapingbatch.dto.payload.*
 
 object PayloadBuilder {
 
@@ -12,6 +9,7 @@ object PayloadBuilder {
             is DptGroupPayloadDto -> DefaultPayloadContainer.dptGroupPayload
             is DptPayloadDto -> DefaultPayloadContainer.dtpPayload
             is LecturePayloadDto -> DefaultPayloadContainer.lecturePayload
+            is MileagePayloadDto -> DefaultPayloadContainer.mileagePayload
             else -> {
                 throw IllegalArgumentException("type of dto: ${dto::class}")
             }

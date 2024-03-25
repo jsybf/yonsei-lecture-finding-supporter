@@ -5,6 +5,7 @@ import gitp.scrapingbatch.dto.response.location.OfflineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.OnlineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.PeriodAndLocationDto
 import gitp.type.Day
+import gitp.type.MajorType
 import gitp.type.OnlineLectureType
 import gitp.type.YonseiBuilding
 
@@ -163,4 +164,43 @@ object Resolvers {
         return periodList
     }
 
+    fun resolveMajor(raw: String): MajorType {
+        val expectedForm: Regex = Regex(
+            """(?<ifMajored>[YN])\((?<ifProtected>[YN])\)"""
+        )
+        val matchGroup: MatchGroupCollection = (expectedForm
+            .find(raw)
+            ?.groups
+            ?: throw IllegalArgumentException("unexpected form:($raw)"))
+
+        return if (matchGroup["ifMajored"]!!.value == "N") {
+            MajorType.NOT_MAJOR
+        } else if (matchGroup["ifMajored"]!!.value == "Y"
+            && matchGroup["ifProtected"]!!.value == "Y"
+        ) {
+            MajorType.MAJOR
+        } else if (matchGroup["ifMajored"]!!.value == "Y"
+            && matchGroup["ifProtected"]!!.value == "N"
+        ) {
+            MajorType.NOT_PROTECTED
+        } else {
+            throw IllegalStateException("unexpected value:($raw)")
+        }
+    }
+
+    fun resolveTotalCreditRatio(raw: String): Pair<Int, Int> {
+        val expectedForm: Regex = Regex(
+            """(?<currentCredit>[0-9]+)/(?<graduateCredit>[0-9]+)"""
+        )
+
+        val matchGroup: MatchGroupCollection = (expectedForm
+            .find(raw)
+            ?.groups
+            ?: throw IllegalArgumentException("unexpected form:($raw)"))
+
+        return Pair(
+            matchGroup["currentCredit"]!!.value.toInt(),
+            matchGroup["graduateCredit"]!!.value.toInt()
+        )
+    }
 }
