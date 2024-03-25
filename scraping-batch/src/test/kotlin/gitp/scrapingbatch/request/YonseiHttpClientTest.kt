@@ -1,12 +1,8 @@
 package gitp.scrapingbatch.request
 
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import gitp.scrapingbatch.dto.response.LectureResponseDto
-import gitp.scrapingbatch.request.objectmapper.LectureResponseObjectMapper
 import gitp.scrapingbatch.utils.MyUtils
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test

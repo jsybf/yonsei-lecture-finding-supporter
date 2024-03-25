@@ -1,11 +1,8 @@
 package gitp.scrapingbatch.request.objectmapper
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import gitp.scrapingbatch.dto.payload.LecturePayloadDto
 import gitp.scrapingbatch.dto.response.LectureIdDto
 import gitp.scrapingbatch.dto.response.LectureResponseDto
@@ -31,13 +28,12 @@ class LectureResponseObjectMapperTest {
     fun no_exception_occur_test_by_real_request() {
         val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
 
-        val yonseiHttpClient: YonseiHttpClient<List<LectureResponseDto>> =
-            YonseiHttpClient.of<List<LectureResponseDto>>(
-                YonseiUrlContainer.lectureUrl,
-                objectMapper
-            ) { jsonNode: JsonNode ->
-                jsonNode.path("dsSles251")
-            }
+        val yonseiHttpClient = YonseiHttpClient.of<List<LectureResponseDto>>(
+            YonseiUrlContainer.lectureUrl,
+            objectMapper
+        ) { jsonNode: JsonNode ->
+            jsonNode.path("dsSles251")
+        }
 
         val payloadDto: LecturePayloadDto = LecturePayloadDto(
             Year.of(2024),
