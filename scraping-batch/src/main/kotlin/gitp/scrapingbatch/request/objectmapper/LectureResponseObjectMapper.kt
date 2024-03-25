@@ -20,6 +20,7 @@ class LectureResponseObjectMapper :
             .split("-")
             .takeIf { it.size == 3 }
             ?: throw IllegalStateException("""lecture id's form should be "0000000"-"00"-"00" """)
+
         return LectureResponseDto(
             jsonTree.get("subjtNm").asText(),
             ProfessorDto(

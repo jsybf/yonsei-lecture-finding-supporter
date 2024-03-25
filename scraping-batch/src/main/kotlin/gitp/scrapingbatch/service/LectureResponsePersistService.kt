@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
 
 @Service
 @Transactional
-class ResponsePersistService(
+class LectureResponsePersistService(
     val lectureIdRepository: LectureIdRepository,
     val offlineLectureLocationRepository: OfflineLectureLocationRepository,
     val onlineLectureLocationRepository: OnlineLectureLocationRepository,

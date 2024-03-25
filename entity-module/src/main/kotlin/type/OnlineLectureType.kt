@@ -2,7 +2,7 @@ package gitp.type
 
 enum class OnlineLectureType(vararg koreanCodes: String) {
     VIDEO("동영상콘텐츠", "동영상"),
-    LIVE_STREAMING("실시간콘텐츠");
+    LIVE_STREAMING("실시간온라인");
 
     private val koreanCodeArr: Array<String> = arrayOf(*koreanCodes)
 

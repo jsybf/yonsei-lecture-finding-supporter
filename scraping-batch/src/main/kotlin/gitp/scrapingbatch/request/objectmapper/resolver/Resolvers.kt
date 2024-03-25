@@ -63,7 +63,7 @@ object Resolvers {
             // when clause doesn't work like if-elseif
             // it works like if-if
             when {
-                chunk == "동영상콘텐츠" || chunk == "실시간콘텐츠" || chunk == "동영상" -> {
+                chunk == "동영상콘텐츠" || chunk == "실시간온라인" || chunk == "동영상" -> {
                     locationResultList.add(
                         OnlineLectureLocationDto(
                             OnlineLectureType.of(chunk)
@@ -115,7 +115,7 @@ object Resolvers {
                     locationResultList.add(
                         OfflineLectureLocationDto(
                             YonseiBuilding.of(chunk),
-                            null
+                            "000"
                         )
                     )
                 }
@@ -134,7 +134,7 @@ object Resolvers {
      */
 
     fun resolvePeriod(raw: String): List<Pair<Day, Set<Int>>> {
-        val periodGroupExtractor: Regex = Regex("""[가-힣]([0-9]+,?)+""")
+        val periodGroupExtractor: Regex = Regex("""[가-힣]-?([0-9]+,?)+""")
         val dayExtractor: Regex = Regex("""[월화수목금토일]""")
         val periodExtractor: Regex = Regex("""[0-9]+""")
 

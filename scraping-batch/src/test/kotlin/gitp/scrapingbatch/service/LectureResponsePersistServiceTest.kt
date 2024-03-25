@@ -15,8 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.time.Year
 
 @SpringBootTest
-class ResponsePersistServiceTest @Autowired constructor(
-    val responsePersistService: ResponsePersistService
+class LectureResponsePersistServiceTest @Autowired constructor(
+    val lectureResponsePersistService: LectureResponsePersistService
 ) {
     @Test
     fun no_brain_test() {
@@ -40,7 +40,7 @@ class ResponsePersistServiceTest @Autowired constructor(
             yonseiHttpClient.retrieveAndMap(PayloadBuilder.toPayload(payloadDto))
 
         for (dto in dtoList) {
-            responsePersistService.save(dto)
+            lectureResponsePersistService.save(dto)
         }
     }
 }
