@@ -3,6 +3,7 @@ package gitp.scrapingbatch.request
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -41,7 +42,8 @@ class YonseiHttpClient<T : Any>(
     private val typeReference: TypeReference<T>,
     private val url: String,
     private val postDeserialize: ((JsonNode) -> JsonNode)?,
-    private val objectMapper: ObjectMapper
+    private val objectMapper: ObjectMapper,
+    private val skipPredicate: Map<String, String> = emptyMap()
 ) {
     private val httpClient: HttpClient = HttpClient.newHttpClient()
     private val log: Logger = LoggerFactory.getLogger(YonseiHttpClient::class.java)
@@ -50,23 +52,35 @@ class YonseiHttpClient<T : Any>(
         inline fun <reified K : Any> of(
             url: String,
             objectMapper: ObjectMapper,
-            noinline postDeserialize: ((JsonNode) -> JsonNode)?
+            skipPredicate: Map<String, String> = emptyMap(),
+            noinline postDeserialize: ((JsonNode) -> JsonNode)?,
         ): YonseiHttpClient<K> {
             return YonseiHttpClient(
                 object : TypeReference<K>() {},
                 url,
                 postDeserialize,
-                objectMapper
+                objectMapper,
+                skipPredicate
             )
         }
     }
 
     fun retrieveAndMap(payloads: String): T {
         val response: String = retrieve(payloads)
-        val responseJson: JsonNode = objectMapper.readTree(response)
-        val refinedResponseJson: JsonNode = postDeserialize?.invoke(responseJson) ?: responseJson
 
-        return objectMapper.readValue(refinedResponseJson.toString(), typeReference)
+        return objectMapper.readValue(
+            refineJson(objectMapper.readTree(response)).toString()
+            , typeReference)
+    }
+
+    fun refineJson(json: JsonNode):  ArrayNode {
+            return (postDeserialize?.invoke(json) ?: json)
+                .filter { jsonNode: JsonNode ->
+                    skipPredicate
+                        .map { jsonNode.get(it.key).asText() == it.value }
+                        .all { it == false }
+                }
+                .let { objectMapper.valueToTree(it) }
     }
 
     fun retrieve(payloads: String): String {
