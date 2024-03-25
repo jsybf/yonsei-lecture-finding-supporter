@@ -15,6 +15,7 @@ import gitp.scrapingbatch.dto.response.location.OnlineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.PeriodAndLocationDto
 import gitp.scrapingbatch.request.YonseiHttpClient
 import gitp.scrapingbatch.request.YonseiUrlContainer
+import gitp.scrapingbatch.utils.MyUtils
 import gitp.type.Day
 import gitp.type.OnlineLectureType
 import gitp.type.Semester
@@ -28,15 +29,7 @@ class LectureResponseObjectMapperTest {
 
     @Test
     fun no_exception_occur_test_by_real_request() {
-        val objectMapper: ObjectMapper = ObjectMapper()
-            .registerKotlinModule()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .registerModule(
-                SimpleModule().addDeserializer(
-                    LectureResponseDto::class.java,
-                    LectureResponseObjectMapper()
-                )
-            )
+        val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
 
         val yonseiHttpClient: YonseiHttpClient<List<LectureResponseDto>> =
             YonseiHttpClient.of<List<LectureResponseDto>>(
@@ -65,15 +58,7 @@ class LectureResponseObjectMapperTest {
 
     @Test
     fun test_by_sample_data() {
-        val objectMapper: ObjectMapper = ObjectMapper()
-            .registerKotlinModule()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .registerModule(
-                SimpleModule().addDeserializer(
-                    LectureResponseDto::class.java,
-                    LectureResponseObjectMapper()
-                )
-            )
+        val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
 
         val lectureResponseDtoList = objectMapper.readValue(
             testSampleData,

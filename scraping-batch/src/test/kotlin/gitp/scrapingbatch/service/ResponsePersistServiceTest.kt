@@ -10,6 +10,7 @@ import gitp.scrapingbatch.dto.response.LectureResponseDto
 import gitp.scrapingbatch.request.YonseiHttpClient
 import gitp.scrapingbatch.request.YonseiUrlContainer
 import gitp.scrapingbatch.request.objectmapper.LectureResponseObjectMapper
+import gitp.scrapingbatch.utils.MyUtils
 import gitp.type.Semester
 import gitp.yonseiprotohttp.payload.PayloadBuilder
 import org.junit.jupiter.api.Test
@@ -23,15 +24,7 @@ class ResponsePersistServiceTest @Autowired constructor(
 ) {
     @Test
     fun no_brain_test() {
-        val objectMapper: ObjectMapper = ObjectMapper()
-            .registerKotlinModule()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .registerModule(
-                SimpleModule().addDeserializer(
-                    LectureResponseDto::class.java,
-                    LectureResponseObjectMapper()
-                )
-            )
+        val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
 
         val yonseiHttpClient: YonseiHttpClient<List<LectureResponseDto>> =
             YonseiHttpClient.of<List<LectureResponseDto>>(

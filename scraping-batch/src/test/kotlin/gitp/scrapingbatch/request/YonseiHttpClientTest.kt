@@ -7,19 +7,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import gitp.scrapingbatch.dto.response.LectureResponseDto
 import gitp.scrapingbatch.request.objectmapper.LectureResponseObjectMapper
+import gitp.scrapingbatch.utils.MyUtils
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 
 class YonseiHttpClientTest {
-    private val objectMapper: ObjectMapper = ObjectMapper()
-        .registerKotlinModule()
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .registerModule(
-            SimpleModule().addDeserializer(
-                LectureResponseDto::class.java,
-                LectureResponseObjectMapper()
-            )
-        )
+    private val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
 
     @Test
     fun skip_predicate_test() {
