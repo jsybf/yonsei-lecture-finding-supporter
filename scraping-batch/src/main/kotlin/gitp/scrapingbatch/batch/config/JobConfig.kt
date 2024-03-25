@@ -2,8 +2,10 @@ package gitp.scrapingbatch.batch.config
 
 import gitp.scrapingbatch.batch.component.DptGroupRequestAndPersistTasklet
 import gitp.scrapingbatch.batch.component.DptRequestAndPersistTasklet
+import gitp.scrapingbatch.batch.component.LectureRequestAndPersistTasklet
 import gitp.scrapingbatch.repository.DptGroupRepository
 import gitp.scrapingbatch.repository.DptRepository
+import gitp.scrapingbatch.service.LectureResponsePersistService
 import gitp.type.Semester
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -83,6 +85,7 @@ class JobConfig {
             .build()
     }
 
+    // TODO: remove unused params
     @Bean
     @StepScope
     fun dptRequestAndPersistTasklet(
@@ -96,6 +99,46 @@ class JobConfig {
         return DptRequestAndPersistTasklet(
             dptGroupRepository,
             dptRepository
+        )
+    }
+
+    @Bean
+    fun lectureRequestAndPersistJob(
+        jobRepository: JobRepository,
+        lectureRequestAndPersistStep: Step
+    ): Job {
+        return JobBuilder("lectureRequestAndPersistJob", jobRepository)
+            .start(lectureRequestAndPersistStep)
+            .build()
+    }
+
+    @JobScope
+    @Bean
+    fun lectureRequestAndPersistStep(
+        lectureRequestAndPersistTasklet: LectureRequestAndPersistTasklet,
+        jobRepository: JobRepository,
+        transactionManager: PlatformTransactionManager
+    ): Step {
+        return StepBuilder("lectureRequestAndPersistStep", jobRepository)
+            .tasklet(lectureRequestAndPersistTasklet, transactionManager)
+            .build()
+    }
+
+    @Bean
+    @StepScope
+    fun lectureRequestAndPersistTasklet(
+        @Value("#{jobParameters[year]}")
+        year: String,
+        @Value("#{jobParameters[semester]}")
+        semester: String,
+        dptRepository: DptRepository,
+        lectureResponsePersistService: LectureResponsePersistService
+    ): LectureRequestAndPersistTasklet {
+        return LectureRequestAndPersistTasklet(
+            Year.parse(year),
+            Semester.codeOf(semester.toInt()),
+            dptRepository,
+            lectureResponsePersistService
         )
     }
 }
