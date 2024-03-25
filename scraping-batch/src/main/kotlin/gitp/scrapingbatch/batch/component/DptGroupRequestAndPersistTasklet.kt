@@ -9,6 +9,8 @@ import gitp.scrapingbatch.dto.payload.DptGroupPayloadDto
 import gitp.scrapingbatch.dto.response.DptGroupResponseDto
 import gitp.scrapingbatch.repository.DptGroupRepository
 import gitp.scrapingbatch.request.YonseiHttpClient
+import gitp.scrapingbatch.request.YonseiUrlContainer
+import gitp.scrapingbatch.utils.MyUtils
 import gitp.type.Semester
 import gitp.yonseiprotohttp.payload.PayloadBuilder
 import org.springframework.batch.core.StepContribution
@@ -22,14 +24,10 @@ class DptGroupRequestAndPersistTasklet(
     private val semester: Semester,
     private val dptGroupRepository: DptGroupRepository
 ) : Tasklet {
-    private val requestUrl: String =
-        "https://underwood1.yonsei.ac.kr/sch/sles/SlescsCtr/findSchSlesHandbList.do"
 
     private val client = YonseiHttpClient.of<List<DptGroupResponseDto>>(
-        requestUrl,
-        ObjectMapper()
-            .registerKotlinModule()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        YonseiUrlContainer.dptGroupUrl,
+        MyUtils.getCommonObjectMapper()
     ) { jsonNode: JsonNode ->
         jsonNode.path("dsUnivCd")
     }

@@ -1,14 +1,12 @@
 package gitp.scrapingbatch.service
 
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import gitp.scrapingbatch.dto.payload.LecturePayloadDto
 import gitp.scrapingbatch.dto.response.LectureResponseDto
 import gitp.scrapingbatch.request.YonseiHttpClient
-import gitp.scrapingbatch.request.objectmapper.LectureResponseObjectMapper
+import gitp.scrapingbatch.request.YonseiUrlContainer
+import gitp.scrapingbatch.utils.MyUtils
 import gitp.type.Semester
 import gitp.yonseiprotohttp.payload.PayloadBuilder
 import org.junit.jupiter.api.Test
@@ -22,24 +20,14 @@ class ResponsePersistServiceTest @Autowired constructor(
 ) {
     @Test
     fun no_brain_test() {
-        val url = "https://underwood1.yonsei.ac.kr/sch/sles/SlessyCtr/findAtnlcHandbList.do"
-        val objectMapper: ObjectMapper = ObjectMapper()
-            .registerKotlinModule()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .registerModule(
-                SimpleModule().addDeserializer(
-                    LectureResponseDto::class.java,
-                    LectureResponseObjectMapper()
-                )
-            )
+        val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
 
-        val yonseiHttpClient: YonseiHttpClient<List<LectureResponseDto>> =
-            YonseiHttpClient.of<List<LectureResponseDto>>(
-                url,
-                objectMapper
-            ) { jsonNode: JsonNode ->
-                jsonNode.path("dsSles251")
-            }
+        val yonseiHttpClient = YonseiHttpClient.of<List<LectureResponseDto>>(
+            YonseiUrlContainer.lectureUrl,
+            objectMapper
+        ) { jsonNode: JsonNode ->
+            jsonNode.path("dsSles251")
+        }
 
         val payloadDto: LecturePayloadDto = LecturePayloadDto(
             Year.of(2024),

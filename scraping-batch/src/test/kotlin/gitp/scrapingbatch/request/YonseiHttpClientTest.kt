@@ -1,31 +1,19 @@
 package gitp.scrapingbatch.request
 
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ArrayNode
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import gitp.scrapingbatch.dto.response.LectureResponseDto
-import gitp.scrapingbatch.request.objectmapper.LectureResponseObjectMapper
+import gitp.scrapingbatch.utils.MyUtils
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 
 class YonseiHttpClientTest {
-    private val objectMapper: ObjectMapper = ObjectMapper()
-        .registerKotlinModule()
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .registerModule(
-            SimpleModule().addDeserializer(
-                LectureResponseDto::class.java,
-                LectureResponseObjectMapper()
-            )
-        )
-    private val url = "https://underwood1.yonsei.ac.kr/sch/sles/SlessyCtr/findAtnlcHandbList.do"
+    private val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
 
     @Test
     fun skip_predicate_test() {
         val client = YonseiHttpClient.of<List<LectureResponseDto>>(
-            url,
+            YonseiUrlContainer.lectureUrl,
             objectMapper,
             mapOf("rmvlcYnNm" to "폐강"),
             null
