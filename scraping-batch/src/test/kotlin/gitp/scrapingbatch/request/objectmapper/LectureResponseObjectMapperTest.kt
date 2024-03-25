@@ -1,11 +1,8 @@
 package gitp.scrapingbatch.request.objectmapper
 
 import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import gitp.scrapingbatch.dto.payload.LecturePayloadDto
 import gitp.scrapingbatch.dto.response.LectureIdDto
 import gitp.scrapingbatch.dto.response.LectureResponseDto
@@ -14,6 +11,8 @@ import gitp.scrapingbatch.dto.response.location.OfflineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.OnlineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.PeriodAndLocationDto
 import gitp.scrapingbatch.request.YonseiHttpClient
+import gitp.scrapingbatch.request.YonseiUrlContainer
+import gitp.scrapingbatch.utils.MyUtils
 import gitp.type.Day
 import gitp.type.OnlineLectureType
 import gitp.type.Semester
@@ -24,27 +23,17 @@ import org.junit.jupiter.api.Test
 import java.time.Year
 
 class LectureResponseObjectMapperTest {
-    private val url = "https://underwood1.yonsei.ac.kr/sch/sles/SlessyCtr/findAtnlcHandbList.do"
 
     @Test
     fun no_exception_occur_test_by_real_request() {
-        val objectMapper: ObjectMapper = ObjectMapper()
-            .registerKotlinModule()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .registerModule(
-                SimpleModule().addDeserializer(
-                    LectureResponseDto::class.java,
-                    LectureResponseObjectMapper()
-                )
-            )
+        val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
 
-        val yonseiHttpClient: YonseiHttpClient<List<LectureResponseDto>> =
-            YonseiHttpClient.of<List<LectureResponseDto>>(
-                url,
-                objectMapper
-            ) { jsonNode: JsonNode ->
-                jsonNode.path("dsSles251")
-            }
+        val yonseiHttpClient = YonseiHttpClient.of<List<LectureResponseDto>>(
+            YonseiUrlContainer.lectureUrl,
+            objectMapper
+        ) { jsonNode: JsonNode ->
+            jsonNode.path("dsSles251")
+        }
 
         val payloadDto: LecturePayloadDto = LecturePayloadDto(
             Year.of(2024),
@@ -65,15 +54,7 @@ class LectureResponseObjectMapperTest {
 
     @Test
     fun test_by_sample_data() {
-        val objectMapper: ObjectMapper = ObjectMapper()
-            .registerKotlinModule()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            .registerModule(
-                SimpleModule().addDeserializer(
-                    LectureResponseDto::class.java,
-                    LectureResponseObjectMapper()
-                )
-            )
+        val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
 
         val lectureResponseDtoList = objectMapper.readValue(
             testSampleData,
