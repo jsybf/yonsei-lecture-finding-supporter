@@ -14,6 +14,7 @@ import gitp.scrapingbatch.dto.response.location.OfflineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.OnlineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.PeriodAndLocationDto
 import gitp.scrapingbatch.request.YonseiHttpClient
+import gitp.scrapingbatch.request.YonseiUrlContainer
 import gitp.type.Day
 import gitp.type.OnlineLectureType
 import gitp.type.Semester
@@ -24,7 +25,6 @@ import org.junit.jupiter.api.Test
 import java.time.Year
 
 class LectureResponseObjectMapperTest {
-    private val url = "https://underwood1.yonsei.ac.kr/sch/sles/SlessyCtr/findAtnlcHandbList.do"
 
     @Test
     fun no_exception_occur_test_by_real_request() {
@@ -40,7 +40,7 @@ class LectureResponseObjectMapperTest {
 
         val yonseiHttpClient: YonseiHttpClient<List<LectureResponseDto>> =
             YonseiHttpClient.of<List<LectureResponseDto>>(
-                url,
+                YonseiUrlContainer.lectureUrl,
                 objectMapper
             ) { jsonNode: JsonNode ->
                 jsonNode.path("dsSles251")

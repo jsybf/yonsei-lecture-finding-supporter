@@ -20,12 +20,11 @@ class YonseiHttpClientTest {
                 LectureResponseObjectMapper()
             )
         )
-    private val url = "https://underwood1.yonsei.ac.kr/sch/sles/SlessyCtr/findAtnlcHandbList.do"
 
     @Test
     fun skip_predicate_test() {
         val client = YonseiHttpClient.of<List<LectureResponseDto>>(
-            url,
+            YonseiUrlContainer.lectureUrl,
             objectMapper,
             mapOf("rmvlcYnNm" to "폐강"),
             null
