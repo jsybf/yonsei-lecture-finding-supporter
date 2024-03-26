@@ -6,7 +6,6 @@ import gitp.scrapingbatch.dto.response.location.OfflineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.OnlineLectureLocationDto
 import gitp.scrapingbatch.repository.*
 import jakarta.transaction.Transactional
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,7 +16,8 @@ class LectureResponsePersistService(
     val onlineLectureLocationRepository: OnlineLectureLocationRepository,
     val lectureRepository: LectureRepository,
     val lectureTimeRepository: LectureTimeRepository,
-    val professorRepository: ProfessorRepository
+    val professorRepository: ProfessorRepository,
+    val lectureProfessorJunctionRepository: LectureProfessorJunctionRepository
 ) {
     fun save(responseDto: LectureResponseDto) {
         responseDto.professor
@@ -31,15 +31,25 @@ class LectureResponsePersistService(
         val professorList: List<Professor> = responseDto.professor
             .map { professorRepository.findByName(it.name)!! }
             .toList()
-        val lectureEntityId: Long = lectureRepository.save(
+
+        val lectureEntity: Lecture = lectureRepository.save(
             Lecture(
                 null,
                 responseDto.name,
-                professorRepository.findByName(responseDto.professor[0].name)!!,
                 lectureIdRepository.findByContent(responseDto.lectureId.toEntity())!!
             )
-        ).id!!
+        )
 
+        professorList
+            .forEach {
+                lectureProfessorJunctionRepository.save(
+                    LectureProfessorJunction(
+                        null,
+                        lectureEntity,
+                        it
+                    )
+                )
+            }
 
         for (periodAndLocationDto in responseDto.periodAndLocationDtoList!!) {
             when (periodAndLocationDto.locationDto) {
@@ -94,7 +104,7 @@ class LectureResponsePersistService(
                             )
                         }
                     },
-                    lectureRepository.findByIdOrNull(lectureEntityId)!!
+                    lectureEntity
                 )
             )
         }
