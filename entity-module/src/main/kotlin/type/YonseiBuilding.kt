@@ -23,6 +23,7 @@ enum class YonseiBuilding(val koreanCode: String) {
     SPORT_EDU("체"),
     SPORT("스포츠"),
     BAEGYANG_S("백S"),
+    BAEGYANG_N("백N"),
     BAEGYANG("백"),
     BAEGYANG_HALL("백양관강당"),
     APENJ("아"),
