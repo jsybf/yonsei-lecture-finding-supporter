@@ -23,10 +23,14 @@ class LectureResponseObjectMapper :
 
         return LectureResponseDto(
             jsonTree.get("subjtNm").asText(),
-            ProfessorDto(
-                null,
-                jsonTree.get("cgprfNm").asText()
-            ),
+            jsonTree.get("cgprfNm").asText()
+                .split(",")
+                .map {
+                    ProfessorDto(
+                        null,
+                        it
+                    )
+                }.toList(),
             LectureIdDto(
                 null,
                 lectureIdList[0],

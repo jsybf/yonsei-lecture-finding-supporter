@@ -1,9 +1,6 @@
 package gitp.scrapingbatch.service
 
-import gitp.entity.Lecture
-import gitp.entity.LectureTime
-import gitp.entity.OfflineLectureLocation
-import gitp.entity.OnlineLectureLocation
+import gitp.entity.*
 import gitp.scrapingbatch.dto.response.LectureResponseDto
 import gitp.scrapingbatch.dto.response.location.OfflineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.OnlineLectureLocationDto
@@ -23,19 +20,22 @@ class LectureResponsePersistService(
     val professorRepository: ProfessorRepository
 ) {
     fun save(responseDto: LectureResponseDto) {
-        if (!professorRepository.existsByName(responseDto.professor.name)) {
-            professorRepository.save(responseDto.professor.toEntity())
-        }
+        responseDto.professor
+            .filter { !professorRepository.existsByName(it.name) }
+            .forEach { professorRepository.save(it.toEntity()) }
 
         if (!lectureIdRepository.existsByContent(responseDto.lectureId.toEntity())) {
             lectureIdRepository.save(responseDto.lectureId.toEntity())
         }
 
+        val professorList: List<Professor> = responseDto.professor
+            .map { professorRepository.findByName(it.name)!! }
+            .toList()
         val lectureEntityId: Long = lectureRepository.save(
             Lecture(
                 null,
                 responseDto.name,
-                professorRepository.findByName(responseDto.professor.name)!!,
+                professorRepository.findByName(responseDto.professor[0].name)!!,
                 lectureIdRepository.findByContent(responseDto.lectureId.toEntity())!!
             )
         ).id!!
