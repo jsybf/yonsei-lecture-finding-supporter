@@ -1,9 +1,6 @@
 package gitp.scrapingbatch.batch.component
 
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import gitp.entity.DptGroup
 import gitp.scrapingbatch.dto.payload.DptGroupPayloadDto
 import gitp.scrapingbatch.dto.response.DptGroupResponseDto
@@ -25,7 +22,7 @@ class DptGroupRequestAndPersistTasklet(
     private val dptGroupRepository: DptGroupRepository
 ) : Tasklet {
 
-    private val client = YonseiHttpClient.of<List<DptGroupResponseDto>>(
+    private val client = YonseiHttpClient.of<DptGroupResponseDto>(
         YonseiUrlContainer.dptGroupUrl,
         MyUtils.getCommonObjectMapper()
     ) { jsonNode: JsonNode ->
@@ -44,7 +41,7 @@ class DptGroupRequestAndPersistTasklet(
             )
         )
         // TODO: exception handling if response is empty or response code isn't 200
-        val responseDtoList: List<DptGroupResponseDto> = client.retrieveAndMap(payloads)
+        val responseDtoList: List<DptGroupResponseDto> = client.retrieveAndMapToList(payloads)
 
 
         // TODO: exception handling if jdbc throw exception

@@ -30,7 +30,7 @@ open class LectureRequestAndPersistTasklet(
 ) : Tasklet, StepExecutionListener {
     private val log: Logger = LoggerFactory.getLogger(LectureRequestAndPersistTasklet::class.java)
 
-    private val client = YonseiHttpClient.of<List<LectureResponseDto>>(
+    private val client = YonseiHttpClient.of<LectureResponseDto>(
         YonseiUrlContainer.lectureUrl,
         MyUtils.getCommonObjectMapper(),
         mapOf("rmvlcYnNm" to "폐강"),
@@ -53,7 +53,7 @@ open class LectureRequestAndPersistTasklet(
 
         log.info("request and persist lecture of [{}]", dpt.dptName)
 
-        val lectureResponseDtoList: List<LectureResponseDto> = client.retrieveAndMap(
+        val lectureResponseDtoList: List<LectureResponseDto> = client.retrieveAndMapToList(
             PayloadBuilder.toPayload(
                 LecturePayloadDto(
                     year,

@@ -28,7 +28,7 @@ class LectureResponseObjectMapperTest {
     fun no_exception_occur_test_by_real_request() {
         val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
 
-        val yonseiHttpClient = YonseiHttpClient.of<List<LectureResponseDto>>(
+        val yonseiHttpClient = YonseiHttpClient.of<LectureResponseDto>(
             YonseiUrlContainer.lectureUrl,
             objectMapper
         ) { jsonNode: JsonNode ->
@@ -43,7 +43,7 @@ class LectureResponseObjectMapperTest {
         )
 
         val dtoList: List<LectureResponseDto> =
-            yonseiHttpClient.retrieveAndMap(PayloadBuilder.toPayload(payloadDto))
+            yonseiHttpClient.retrieveAndMapToList(PayloadBuilder.toPayload(payloadDto))
 
         var cnt = 0
         dtoList.forEach {

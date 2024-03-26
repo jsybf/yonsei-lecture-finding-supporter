@@ -31,7 +31,7 @@ open class DptRequestAndPersistTasklet(
 ) : Tasklet, StepExecutionListener {
     private val log: Logger = LoggerFactory.getLogger(DptRequestAndPersistTasklet::class.java)
 
-    private val client = YonseiHttpClient.of<List<DptResponseDto>>(
+    private val client = YonseiHttpClient.of<DptResponseDto>(
         YonseiUrlContainer.dptUrl,
         MyUtils.getCommonObjectMapper()
     ) { jsonNode: JsonNode ->
@@ -72,7 +72,7 @@ open class DptRequestAndPersistTasklet(
             )
         )
         // TODO: exception handling if response is empty or response code isn't 200
-        val responseDtoList: List<DptResponseDto> = client.retrieveAndMap(payloads)
+        val responseDtoList: List<DptResponseDto> = client.retrieveAndMapToList(payloads)
 
         // TODO: exception handling if jdbc throw exception
         for (dto in responseDtoList) {
