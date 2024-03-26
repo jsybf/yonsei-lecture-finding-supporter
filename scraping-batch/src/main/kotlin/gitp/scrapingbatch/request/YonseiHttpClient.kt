@@ -2,7 +2,6 @@ package gitp.scrapingbatch.request
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
 import gitp.scrapingbatch.dto.response.DeserializableMarker
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -67,10 +66,12 @@ class YonseiHttpClient<T : DeserializableMarker>(
         val response: String = retrieve(payloads)
         return yonseiObjectMapper.mapList(response)
     }
+
     fun retrieveAndGetObjectProducer(payloads: String): YonseiObjectProducer<*> {
         val response: String = retrieve(payloads)
         return yonseiObjectMapper.getObjectProducer(response)
     }
+
     fun retrieve(payloads: String): String {
         val request: HttpRequest = HttpRequest.newBuilder()
             .uri(URI(url))

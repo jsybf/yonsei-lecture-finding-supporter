@@ -12,7 +12,6 @@ import gitp.scrapingbatch.utils.MyUtils
 import gitp.type.Day
 import gitp.type.OnlineLectureType
 import gitp.type.YonseiBuilding
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

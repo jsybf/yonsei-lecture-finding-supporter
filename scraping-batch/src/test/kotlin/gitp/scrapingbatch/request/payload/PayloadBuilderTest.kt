@@ -2,8 +2,8 @@ package gitp.yonseiprotohttp.payload
 
 import gitp.scrapingbatch.dto.payload.DptGroupPayloadDto
 import gitp.scrapingbatch.dto.payload.DptPayloadDto
-import gitp.scrapingbatch.dto.payload.PayloadDto
 import gitp.scrapingbatch.dto.payload.LecturePayloadDto
+import gitp.scrapingbatch.dto.payload.PayloadDto
 import gitp.type.Semester
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -12,10 +12,10 @@ import java.time.Year
 class PayloadBuilderTest {
 
     fun comparePayload(targetPayload: String, dto: PayloadDto): Boolean {
-        //execute
+        // execute
         val payload = PayloadBuilder.toPayload(dto)
 
-        //compare targetPayload and payload by converting them to map
+        // compare targetPayload and payload by converting them to map
         val targetPayloadMap: Map<String, String> = targetPayload.split("&")
             .map { it.split("=") }
             .associateBy({ it[0] }, { it[1] })
