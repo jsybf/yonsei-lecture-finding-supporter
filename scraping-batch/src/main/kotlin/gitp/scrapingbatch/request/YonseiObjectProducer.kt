@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import gitp.scrapingbatch.dto.response.DeserializableMarker
+import gitp.scrapingbatch.exception.ResolutionException
 import java.util.*
 
 class YonseiObjectProducer<T : DeserializableMarker>(
@@ -26,8 +27,13 @@ class YonseiObjectProducer<T : DeserializableMarker>(
         }
     }
 
-    fun pop(): T? {
+    fun  pop(): T? {
         val json: JsonNode = jsonQueue.poll() ?: return null
-        return objectMapper.readValue(json.toString(), typeReference)
+        try {
+            return objectMapper.readValue(json.toString(), typeReference)
+        } catch (e: ResolutionException) {
+            e.rawResponseJson = json.asText()
+            throw e
+        }
     }
 }

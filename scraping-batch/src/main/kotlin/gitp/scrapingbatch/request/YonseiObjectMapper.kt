@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import gitp.scrapingbatch.dto.response.DeserializableMarker
+import gitp.scrapingbatch.exception.ResolutionException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -70,17 +71,27 @@ class YonseiObjectMapper<T : DeserializableMarker>(
     }
 
     fun map(json: String): T {
-        return objectMapper.readValue(
-            refineJson(json).toString(),
-            typeReference
-        )
+        try {
+            return objectMapper.readValue(
+                refineJson(json).toString(),
+                typeReference
+            )
+        } catch (e: ResolutionException) {
+            e.rawResponseJson = json
+            throw e
+        }
     }
 
     fun mapList(json: String): List<T> {
-        return objectMapper.readValue(
-            refineJson(json).toString(),
-            listTypeReference
-        )
+        try {
+            return objectMapper.readValue(
+                refineJson(json).toString(),
+                listTypeReference
+            )
+        } catch (e: ResolutionException) {
+            e.rawResponseJson = json
+            throw e
+        }
 
     }
 

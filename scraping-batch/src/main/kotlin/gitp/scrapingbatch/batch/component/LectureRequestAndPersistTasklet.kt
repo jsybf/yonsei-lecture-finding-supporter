@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import gitp.entity.Dpt
 import gitp.scrapingbatch.dto.payload.LecturePayloadDto
 import gitp.scrapingbatch.dto.response.LectureResponseDto
+import gitp.scrapingbatch.exception.ResolutionException
 import gitp.scrapingbatch.repository.DptRepository
 import gitp.scrapingbatch.request.YonseiHttpClient
 import gitp.scrapingbatch.request.YonseiObjectProducer
@@ -14,7 +15,9 @@ import gitp.type.Semester
 import gitp.yonseiprotohttp.payload.PayloadBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.StepContribution
+import org.springframework.batch.core.StepExecution
 import org.springframework.batch.core.StepExecutionListener
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
@@ -44,6 +47,8 @@ open class LectureRequestAndPersistTasklet(
     // dptGroupCount is initialed not in construct-time but by beforeStep method
     // since lateinit doesn't support val,I can't find solution to make it val
     private var dptGroupCount: Long = 0
+
+    private val rawErrorJsonNodes: MutableList<String> = mutableListOf()
     override fun execute(
         contribution: StepContribution, chunkContext: ChunkContext
     ): RepeatStatus? {
@@ -67,10 +72,25 @@ open class LectureRequestAndPersistTasklet(
             ) as YonseiObjectProducer<LectureResponseDto>
 
         while (true) {
-            val lectureResponseDto: LectureResponseDto = objectProducer.pop() ?: break
-            lectureResponsePersistService.save(lectureResponseDto)
+            val lectureResponseDto: LectureResponseDto
+            try {
+                lectureResponseDto = objectProducer.pop() ?: break
+                lectureResponsePersistService.save(lectureResponseDto)
+            } catch (e: ResolutionException) {
+                // rawErrorJsonNodes.add(e.rawResponseJson!!)
+                log.warn("catch exception json excpetion:${e.message}")
+            }
         }
 
         return RepeatStatus.CONTINUABLE
+    }
+
+    override fun afterStep(stepExecution: StepExecution): ExitStatus? {
+        log.info("exception occured: ${rawErrorJsonNodes.size}")
+        rawErrorJsonNodes.forEach {
+            log.info("{}", it)
+        }
+
+        return ExitStatus.COMPLETED
     }
 }
