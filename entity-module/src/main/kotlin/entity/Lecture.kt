@@ -11,9 +11,6 @@ class Lecture(
     val name: String,
 
     @ManyToOne
-    val professor: Professor,
-
-    @ManyToOne
     val lectureId: LectureId
 
 ) {
