@@ -6,6 +6,7 @@ import gitp.scrapingbatch.dto.payload.LecturePayloadDto
 import gitp.scrapingbatch.dto.response.LectureResponseDto
 import gitp.scrapingbatch.repository.DptRepository
 import gitp.scrapingbatch.request.YonseiHttpClient
+import gitp.scrapingbatch.request.YonseiObjectProducer
 import gitp.scrapingbatch.request.YonseiUrlContainer
 import gitp.scrapingbatch.service.LectureResponsePersistService
 import gitp.scrapingbatch.utils.MyUtils
@@ -53,19 +54,21 @@ open class LectureRequestAndPersistTasklet(
 
         log.info("request and persist lecture of [{}]", dpt.dptName)
 
-        val lectureResponseDtoList: List<LectureResponseDto> = client.retrieveAndMapToList(
-            PayloadBuilder.toPayload(
-                LecturePayloadDto(
-                    year,
-                    semester,
-                    dpt.dptGroup.dptGroupId,
-                    dpt.dptId
+        val objectProducer: YonseiObjectProducer<LectureResponseDto> =
+            client.retrieveAndGetObjectProducer(
+                PayloadBuilder.toPayload(
+                    LecturePayloadDto(
+                        year,
+                        semester,
+                        dpt.dptGroup.dptGroupId,
+                        dpt.dptId
+                    )
                 )
-            )
-        )
+            ) as YonseiObjectProducer<LectureResponseDto>
 
-        for (responseDto in lectureResponseDtoList) {
-            lectureResponsePersistService.save(responseDto)
+        while (true) {
+            val lectureResponseDto: LectureResponseDto = objectProducer.pop() ?: break
+            lectureResponsePersistService.save(lectureResponseDto)
         }
 
         return RepeatStatus.CONTINUABLE
