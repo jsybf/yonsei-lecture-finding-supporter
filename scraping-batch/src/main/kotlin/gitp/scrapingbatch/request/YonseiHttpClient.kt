@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
+import gitp.scrapingbatch.dto.response.DeserializableMarker
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -36,7 +37,7 @@ import java.net.http.HttpResponse.BodyHandlers
  *          }
  *      ]
  */
-class YonseiHttpClient<T : List<Any>>(
+class YonseiHttpClient<T : DeserializableMarker>(
 //     using TypeReference<T> instead of Klass for Class because of
 //     type erasing when using Collection<T> (ex: List<fooDto>)
     private val typeReference: TypeReference<T>,
@@ -49,7 +50,7 @@ class YonseiHttpClient<T : List<Any>>(
     private val log: Logger = LoggerFactory.getLogger(YonseiHttpClient::class.java)
 
     companion object {
-        inline fun <reified K : List<Any>> of(
+        inline fun <reified K : DeserializableMarker> of(
             url: String,
             objectMapper: ObjectMapper,
             skipPredicate: Map<String, String> = emptyMap(),
