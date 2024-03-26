@@ -94,7 +94,7 @@ object Resolvers {
     fun resolveLocation(raw: String): List<LectureLocationDto> {
         val ifOnlyKorean = Regex("""^[가-힣]+$""")
         val commonAddress = Regex(
-            """(?<buildingName>[가-힣]+)(?<buildingNameOrB>[A-Z]*)(?<address>[0-9]{2,3})"""
+            """(?<buildingName>[가-힣]+)(?<buildingNameOrB>[A-Z]?)(?<address>[0-9]{2,3})"""
         )
 
         val locationChunkList: List<String> = splitLocation(raw)
@@ -111,7 +111,7 @@ object Resolvers {
                         OnlineLectureLocationDto(
                             OnlineLectureType.of(
                                 OnlineLectureType.allKoreanCodes()
-                                    .find{ chunk.contains(it)}!!
+                                    .find { chunk.contains(it) }!!
                             ),
                             !chunk.contains(Regex("""중복수강불가"""))
                         )
@@ -126,19 +126,19 @@ object Resolvers {
                         .find(chunk)
                         ?.groups
                         ?: throw IllegalStateException("unexpected form(input:$chunk)"))
+
                     if (
-                        (matchGroup["buildingName"]!!.value == "공" &&
-                                matchGroup["buildingNameOrB"]!!.value == "B") ||
-                        (matchGroup["buildingName"]!!.value == "백" &&
-                                matchGroup["buildingNameOrB"]!!.value == "S")
+                        matchGroup["buildingName"]!!.value != "공" &&
+                        matchGroup["buildingNameOrB"]!!.value == "B"
                     ) {
-                        buildingName =
-                            matchGroup["buildingName"]!!.value + matchGroup["buildingNameOrB"]!!.value
-                        address = matchGroup["address"]!!.value
-                    } else {
                         buildingName = matchGroup["buildingName"]!!.value
                         address =
                             matchGroup["buildingNameOrB"]!!.value + matchGroup["address"]!!.value
+                    } else {
+                        buildingName =
+                            matchGroup["buildingName"]!!.value + matchGroup["buildingNameOrB"]!!.value
+                        address =
+                            matchGroup["address"]!!.value
                     }
 
                     locationResultList.add(
