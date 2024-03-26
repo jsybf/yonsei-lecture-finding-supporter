@@ -23,7 +23,7 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.Year
 
-class LectureResponseObjectMapperTest {
+class LectureResponseDeserializerTest {
 
     @Test
     fun no_exception_occur_test_by_real_request() {

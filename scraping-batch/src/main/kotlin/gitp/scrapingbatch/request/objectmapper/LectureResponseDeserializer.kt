@@ -9,7 +9,7 @@ import gitp.scrapingbatch.dto.response.LectureResponseDto
 import gitp.scrapingbatch.dto.response.ProfessorDto
 import gitp.scrapingbatch.request.objectmapper.resolver.Resolvers
 
-class LectureResponseObjectMapper :
+class LectureResponseDeserializer :
     StdDeserializer<LectureResponseDto>(LectureResponseDto::class.java) {
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): LectureResponseDto {
         val jsonTree: JsonNode = p!!.codec.readTree<JsonNode>(p)
