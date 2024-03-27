@@ -188,7 +188,7 @@ object Resolvers {
         val matchGroup: MatchGroupCollection = (expectedForm
             .find(raw)
             ?.groups
-            ?: throw IllegalArgumentException("unexpected form:($raw)"))
+            ?: throw ResolutionException("unexpected form:($raw)"))
 
         return Pair(
             matchGroup["currentCredit"]!!.value.toInt(),
@@ -203,7 +203,7 @@ object Resolvers {
         val matchGroup: MatchGroupCollection = (expectedForm
             .find(raw)
             ?.groups
-            ?: throw IllegalArgumentException("unexpected form:($raw)"))
+            ?: throw ResolutionException("unexpected form:($raw)"))
 
         return if (matchGroup["ifMajored"]!!.value == "N") {
             MajorType.NOT_MAJOR
@@ -216,7 +216,7 @@ object Resolvers {
         ) {
             MajorType.NOT_PROTECTED
         } else {
-            throw IllegalStateException("unexpected value:($raw)")
+            throw ResolutionException("unexpected value:($raw)")
         }
     }
 }

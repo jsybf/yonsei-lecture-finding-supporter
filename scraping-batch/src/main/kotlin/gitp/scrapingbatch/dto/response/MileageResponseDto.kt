@@ -1,5 +1,7 @@
 package gitp.scrapingbatch.dto.response
 
+import gitp.entity.Lecture
+import gitp.entity.MileageRank
 import gitp.type.MajorType
 
 data class MileageResponseDto(
@@ -15,4 +17,21 @@ data class MileageResponseDto(
     val ifGraduateApplied: Boolean,
     // val ifDisabled: Boolean
 
-)
+) : DeserializableMarker {
+    fun toEntity(lectureEntity: Lecture): MileageRank {
+        return MileageRank(
+            null,
+            lectureEntity,
+            rank,
+            mileage,
+            ifSucceed,
+            grade,
+            totalCreditRatio,
+            major,
+            lastSemesterCreditRatio,
+            appliedLectureNum,
+            ifFirstRegister,
+            ifGraduateApplied
+        )
+    }
+}

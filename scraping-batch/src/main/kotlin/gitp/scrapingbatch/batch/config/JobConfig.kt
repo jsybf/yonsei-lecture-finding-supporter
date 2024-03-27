@@ -3,9 +3,8 @@ package gitp.scrapingbatch.batch.config
 import gitp.scrapingbatch.batch.component.DptGroupRequestAndPersistTasklet
 import gitp.scrapingbatch.batch.component.DptRequestAndPersistTasklet
 import gitp.scrapingbatch.batch.component.LectureRequestAndPersistTasklet
-import gitp.scrapingbatch.repository.DptGroupRepository
-import gitp.scrapingbatch.repository.DptRepository
-import gitp.scrapingbatch.repository.ObjectMappingErrorRepository
+import gitp.scrapingbatch.batch.component.MileageRankRequestAndPersistTasklet
+import gitp.scrapingbatch.repository.*
 import gitp.scrapingbatch.service.LectureResponsePersistService
 import gitp.type.Semester
 import org.springframework.batch.core.Job
@@ -123,4 +122,41 @@ class JobConfig {
             )
             .build()
     }
+
+    @Bean
+    fun mileageRequestAndPersistJob(
+        jobRepository: JobRepository,
+        mileageRequestAndPersistStep: Step
+    ): Job {
+        return JobBuilder("mileageRequestAndPersistJob", jobRepository)
+            .start(mileageRequestAndPersistStep)
+            .build()
+    }
+
+    @JobScope
+    @Bean
+    fun mileageRequestAndPersistStep(
+        @Value("#{jobParameters[year]}")
+        year: String,
+        @Value("#{jobParameters[semester]}")
+        semester: String,
+        jobRepository: JobRepository,
+        lectureRepository: LectureRepository,
+        mileageRankRepository: MileageRankRepository,
+        objectMappingErrorRepository: ObjectMappingErrorRepository,
+        transactionManager: PlatformTransactionManager
+    ): Step {
+        return StepBuilder("mileageRequestAndPersistStep", jobRepository)
+            .tasklet(
+                MileageRankRequestAndPersistTasklet(
+                    Year.parse(year),
+                    Semester.codeOf(semester.toInt()),
+                    lectureRepository,
+                    mileageRankRepository,
+                    objectMappingErrorRepository,
+                ), transactionManager
+            )
+            .build()
+    }
+
 }

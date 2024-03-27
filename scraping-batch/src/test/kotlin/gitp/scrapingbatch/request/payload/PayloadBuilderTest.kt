@@ -1,9 +1,7 @@
 package gitp.yonseiprotohttp.payload
 
-import gitp.scrapingbatch.dto.payload.DptGroupPayloadDto
-import gitp.scrapingbatch.dto.payload.DptPayloadDto
-import gitp.scrapingbatch.dto.payload.LecturePayloadDto
-import gitp.scrapingbatch.dto.payload.PayloadDto
+import gitp.scrapingbatch.dto.payload.*
+import gitp.scrapingbatch.dto.response.LectureIdDto
 import gitp.type.Semester
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -64,6 +62,27 @@ class PayloadBuilderTest {
             Semester.FIRST,
             "s11001",
             "30109"
+        )
+
+        Assertions.assertThat(comparePayload(targetPayload, dto)).isTrue()
+    }
+
+
+    @Test
+    fun mileage_payload_build_test() {
+
+        val targetPayload: String =
+            "_menuId=MTA5MzM2MTI3MjkzMTI2NzYwMDA%3D&_menuNm=&_pgmId=NDE0MDA4NTU1NjY%3D&%40d1%23sysinstDivCd=H1&%40d1%23syy=2024&%40d1%23smtDivCd=10&%40d1%23stuno=&%40d1%23subjtnb=ECO1101&%40d1%23appcsSchdlCd=&%40d1%23corseDvclsNo=01&%40d1%23prctsCorseDvclsNo=00&%40d%23=%40d1%23&%40d1%23=dmCond&%40d1%23tp=dm"
+
+        val dto = MileagePayloadDto(
+            Year.of(2024),
+            Semester.FIRST,
+            LectureIdDto(
+                null,
+                "ECO1101",
+                "01",
+                "00"
+            )
         )
 
         Assertions.assertThat(comparePayload(targetPayload, dto)).isTrue()
