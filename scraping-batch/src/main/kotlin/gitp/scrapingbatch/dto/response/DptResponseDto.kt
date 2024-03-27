@@ -7,4 +7,4 @@ data class DptResponseDto(
     val dptName: String,
     @JsonProperty(value = "deptCd")
     val dptId: String,
-)
+) : DeserializableMarker

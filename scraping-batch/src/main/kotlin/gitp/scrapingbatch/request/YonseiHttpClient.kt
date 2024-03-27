@@ -1,9 +1,8 @@
 package gitp.scrapingbatch.request
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.node.ArrayNode
+import gitp.scrapingbatch.dto.response.DeserializableMarker
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.net.URI
@@ -36,51 +35,41 @@ import java.net.http.HttpResponse.BodyHandlers
  *          }
  *      ]
  */
-class YonseiHttpClient<T : List<Any>>(
+class YonseiHttpClient<T : DeserializableMarker>(
 //     using TypeReference<T> instead of Klass for Class because of
 //     type erasing when using Collection<T> (ex: List<fooDto>)
-    private val typeReference: TypeReference<T>,
     private val url: String,
-    private val postDeserialize: ((JsonNode) -> JsonNode)?,
-    private val objectMapper: ObjectMapper,
-    private val skipPredicate: Map<String, String> = emptyMap()
+    private val yonseiObjectMapper: YonseiObjectMapper<T>,
 ) {
     private val httpClient: HttpClient = HttpClient.newHttpClient()
     private val log: Logger = LoggerFactory.getLogger(YonseiHttpClient::class.java)
 
     companion object {
-        inline fun <reified K : List<Any>> of(
+        inline fun <reified K : DeserializableMarker> of(
             url: String,
             objectMapper: ObjectMapper,
             skipPredicate: Map<String, String> = emptyMap(),
             noinline postDeserialize: ((JsonNode) -> JsonNode)?,
         ): YonseiHttpClient<K> {
             return YonseiHttpClient(
-                object : TypeReference<K>() {},
                 url,
-                postDeserialize,
-                objectMapper,
-                skipPredicate
+                YonseiObjectMapper.of<K>(
+                    objectMapper,
+                    skipPredicate,
+                    postDeserialize
+                )
             )
         }
     }
 
-    fun retrieveAndMap(payloads: String): T {
+    fun retrieveAndMapToList(payloads: String): List<T> {
         val response: String = retrieve(payloads)
-
-        return objectMapper.readValue(
-            refineJson(objectMapper.readTree(response)).toString()
-            , typeReference)
+        return yonseiObjectMapper.mapList(response)
     }
 
-    fun refineJson(json: JsonNode):  ArrayNode {
-            return (postDeserialize?.invoke(json) ?: json)
-                .filter { jsonNode: JsonNode ->
-                    skipPredicate
-                        .map { jsonNode.get(it.key).asText() == it.value }
-                        .all { it == false }
-                }
-                .let { objectMapper.valueToTree(it) }
+    fun retrieveAndGetObjectProducer(payloads: String): YonseiObjectProducer<*> {
+        val response: String = retrieve(payloads)
+        return yonseiObjectMapper.getObjectProducer(response)
     }
 
     fun retrieve(payloads: String): String {

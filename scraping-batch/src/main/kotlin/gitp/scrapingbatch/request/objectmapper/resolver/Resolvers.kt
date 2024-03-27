@@ -4,6 +4,7 @@ import gitp.scrapingbatch.dto.response.location.LectureLocationDto
 import gitp.scrapingbatch.dto.response.location.OfflineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.OnlineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.PeriodAndLocationDto
+import gitp.scrapingbatch.exception.ResolutionException
 import gitp.type.Day
 import gitp.type.OnlineLectureType
 import gitp.type.YonseiBuilding
@@ -47,7 +48,7 @@ object Resolvers {
                         )
                     }
             }
-            throw IllegalStateException(
+            throw ResolutionException(
                 "size of resolvedLocation(${resolvedLocation.size}) != size of resolvedPeriod" +
                         "(:${resolvedPeriod.size})"
             )
@@ -76,6 +77,12 @@ object Resolvers {
 
         for (periodChunk in periodChunkList) {
             val chunk: List<Pair<Day, Set<Int>>> = regex.findAll(periodChunk).map { matchResult ->
+                if (matchResult.groups["day"]!!.value == "") {
+                    throw ResolutionException("can't extract day input:($raw)")
+                }
+                if (matchResult.groups["periodList"]!!.value == "") {
+                    throw ResolutionException("can't extract day input:($raw)")
+                }
                 Pair(
                     Day.of(matchResult.groups["day"]!!.value),
                     matchResult.groups["periodList"]!!.value
@@ -125,7 +132,7 @@ object Resolvers {
                     val matchGroup: MatchGroupCollection = (commonAddress
                         .find(chunk)
                         ?.groups
-                        ?: throw IllegalStateException("unexpected form(input:$chunk)"))
+                        ?: throw ResolutionException("unexpected form(input:$chunk)"))
 
                     if (
                         matchGroup["buildingName"]!!.value != "공" &&
@@ -143,7 +150,7 @@ object Resolvers {
 
                     locationResultList.add(
                         OfflineLectureLocationDto(
-                            YonseiBuilding.of(buildingName),
+                            getYonseiBuildingAdaptor(buildingName),
                             address
                         )
                     )
@@ -152,15 +159,23 @@ object Resolvers {
                 ifOnlyKorean.matches(chunk) -> {
                     locationResultList.add(
                         OfflineLectureLocationDto(
-                            YonseiBuilding.of(chunk),
+                            getYonseiBuildingAdaptor(chunk),
                             "000"
                         )
                     )
                 }
 
-                else -> throw IllegalStateException("(input:$chunk) doesn't matched cases")
+                else -> throw ResolutionException("(input:$chunk) doesn't matched cases")
             } // when scope end
         } // for scope end
         return locationResultList
+    }
+
+    private fun getYonseiBuildingAdaptor(koreanCode: String): YonseiBuilding {
+        try {
+            return YonseiBuilding.of(koreanCode)
+        } catch (e: Exception) {
+            throw ResolutionException("no matching koreanCode for $koreanCode")
+        }
     }
 }

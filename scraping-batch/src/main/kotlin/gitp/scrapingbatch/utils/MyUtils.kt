@@ -3,10 +3,9 @@ package gitp.scrapingbatch.utils
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
-import com.fasterxml.jackson.module.kotlin.addDeserializer
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import gitp.scrapingbatch.dto.response.LectureResponseDto
-import gitp.scrapingbatch.request.objectmapper.LectureResponseObjectMapper
+import gitp.scrapingbatch.request.objectmapper.LectureResponseDeserializer
 
 object MyUtils {
     fun getCommonObjectMapper(): ObjectMapper {
@@ -17,7 +16,7 @@ object MyUtils {
                 SimpleModule()
                     .addDeserializer(
                         LectureResponseDto::class.java,
-                        LectureResponseObjectMapper()
+                        LectureResponseDeserializer()
                     )
             )
     }

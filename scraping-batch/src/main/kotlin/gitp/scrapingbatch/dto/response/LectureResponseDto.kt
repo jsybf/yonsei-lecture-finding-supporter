@@ -7,4 +7,4 @@ data class LectureResponseDto(
     val professor: List<ProfessorDto>,
     val lectureId: LectureIdDto,
     val periodAndLocationDtoList: List<PeriodAndLocationDto>?
-)
+) : DeserializableMarker

@@ -1,172 +1,13 @@
-package gitp.scrapingbatch.request.objectmapper
+package gitp.scrapingbatch.request
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import gitp.scrapingbatch.dto.payload.LecturePayloadDto
-import gitp.scrapingbatch.dto.response.LectureIdDto
-import gitp.scrapingbatch.dto.response.LectureResponseDto
-import gitp.scrapingbatch.dto.response.ProfessorDto
-import gitp.scrapingbatch.dto.response.location.OfflineLectureLocationDto
-import gitp.scrapingbatch.dto.response.location.OnlineLectureLocationDto
-import gitp.scrapingbatch.dto.response.location.PeriodAndLocationDto
-import gitp.scrapingbatch.request.YonseiHttpClient
-import gitp.scrapingbatch.request.YonseiUrlContainer
-import gitp.scrapingbatch.utils.MyUtils
-import gitp.type.Day
-import gitp.type.OnlineLectureType
-import gitp.type.Semester
-import gitp.type.YonseiBuilding
-import gitp.yonseiprotohttp.payload.PayloadBuilder
-import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.Test
-import java.time.Year
+object TestSampleContainer {
+    /**
+     * 3 lecture response element
+     * contains 2 closed lecture
+     */
 
-class LectureResponseObjectMapperTest {
 
-    @Test
-    fun no_exception_occur_test_by_real_request() {
-        val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
-
-        val yonseiHttpClient = YonseiHttpClient.of<List<LectureResponseDto>>(
-            YonseiUrlContainer.lectureUrl,
-            objectMapper
-        ) { jsonNode: JsonNode ->
-            jsonNode.path("dsSles251")
-        }
-
-        val payloadDto: LecturePayloadDto = LecturePayloadDto(
-            Year.of(2024),
-            Semester.FIRST,
-            "s11001",
-            "30111"
-        )
-
-        val dtoList: List<LectureResponseDto> =
-            yonseiHttpClient.retrieveAndMap(PayloadBuilder.toPayload(payloadDto))
-
-        var cnt = 0
-        dtoList.forEach {
-            println("###[${++cnt}]")
-            println(it)
-        }
-    }
-
-    @Test
-    fun test_by_sample_data() {
-        val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
-
-        val lectureResponseDtoList = objectMapper.readValue(
-            testSampleData,
-            object : TypeReference<List<LectureResponseDto>>() {})
-
-        Assertions.assertThat(lectureResponseDtoList)
-            .contains(
-                // TODO: testSampleData contains 4 objects but only wrote assertions for 2
-                // objects, add other 2 objects to assertions
-                LectureResponseDto(
-                    "영화의이해",
-                    listOf(
-                        ProfessorDto(
-                            null,
-                            "강철"
-                        )
-                    ),
-                    LectureIdDto(
-                        null,
-                        "UCE1105",
-                        "01",
-                        "00"
-                    ),
-                    listOf(
-                        PeriodAndLocationDto(
-                            OfflineLectureLocationDto(
-                                YonseiBuilding.GWANGBOK,
-                                "B105"
-                            ),
-                            Day.TUE,
-                            setOf(2, 3)
-                        ),
-                        PeriodAndLocationDto(
-                            OnlineLectureLocationDto(
-                                OnlineLectureType.VIDEO,
-                                true
-                            ),
-                            Day.THU,
-                            setOf(1)
-                        )
-                    )
-                ),
-                LectureResponseDto(
-                    "미학",
-                    listOf(
-                        ProfessorDto(
-                            null,
-                            "양희진"
-                        )
-                    ),
-                    LectureIdDto(
-                        null,
-                        "UCB1110",
-                        "01",
-                        "00"
-                    ),
-                    listOf(
-                        PeriodAndLocationDto(
-                            OfflineLectureLocationDto(
-                                YonseiBuilding.EDU,
-                                "302"
-                            ),
-                            Day.MON,
-                            setOf(3, 4)
-                        ),
-                        PeriodAndLocationDto(
-                            OnlineLectureLocationDto(
-                                OnlineLectureType.VIDEO,
-                                true
-                            ),
-                            Day.WEN,
-                            setOf(4)
-                        )
-                    )
-                ),
-
-                LectureResponseDto(
-                    "미래를위한교육학",
-                    "이무성,장원섭,황금중,박순용,이규민,서영석,이병식,김성원,오석영,류지훈,김남주,하효림,황순예"
-                        .split(",")
-                        .map {
-                            ProfessorDto(null, it)
-                        }.toList(),
-                    LectureIdDto(
-                        null,
-                        "EDU2002",
-                        "01",
-                        "00"
-                    ),
-                    listOf(
-                        PeriodAndLocationDto(
-                            OfflineLectureLocationDto(
-                                YonseiBuilding.EDU,
-                                "306"
-                            ),
-                            Day.FRI,
-                            setOf(6, 7)
-                        ),
-                        PeriodAndLocationDto(
-                            OnlineLectureLocationDto(
-                                OnlineLectureType.VIDEO,
-                                false
-                            ),
-                            Day.FRI,
-                            setOf(8)
-                        )
-                    )
-                )
-            )
-    }
-
-    private val testSampleData = """
+    val simpleLectureResponse = """
         [
         {
             "lawscSubjcgpNm": null,
@@ -479,5 +320,195 @@ class LectureResponseObjectMapperTest {
             "lawscSubjcChrtzNm": null
         }
     ]
+    """.trimIndent()
+    val lectureResponseContainsClosedClasses = """
+      [
+        {
+            "lawscSubjcgpNm": null,
+            "srclnLctreLangDivCd": null,
+            "coprtEstblYn": "0",
+            "smtDivCd": "10",
+            "lessnSessnDivCd": "A",
+            "lctreTimeNm": "수10",
+            "lawscSubjcFldNm": null,
+            "corseDvclsNo": "04",
+            "hy": "0,2,3,4,5",
+            "subsrtDivCd": "FP",
+            "subjtnb": "YCA1003",
+            "experPrctsAmt": 0,
+            "subjtSbtlNm": null,
+            "subjtClNm": "대면강의",
+            "campsDivNm": "신촌",
+            "syllaUnregTrgetDivCd": "0",
+            "subjtChngGudncDivCdTm": null,
+            "onppsPrttnAmt": 0,
+            "subjtChngGudncDivCdPl": null,
+            "gradeEvlMthdDivNm": "P/NP",
+            "cdt": 0,
+            "srclnLctreYn": "0",
+            "rcognHrs": 1,
+            "cgprfNm": null,
+            "subjtChngGudncDivCdPr": null,
+            "timtbDplctPermKindCd": "10",
+            "atntnMattrDesc": null,
+            "usubjtnb": "U00001",
+            "lctreTimeEngNm": "Wed10",
+            "rmvlcYn": "1",
+            "excstPercpFg": "0",
+            "subjtNm": "채플(3)",
+            "lecrmNm": null,
+            "rmvlcYnNm": "폐강",
+            "medcHyLisup": null,
+            "gradeEvlMthdDivCd": "3",
+            "estblDeprtCd": "30105",
+            "subjtNm2": "채플(3)",
+            "syy": "2024",
+            "prctsCorseDvclsNo": "00",
+            "campsBusnsCd": "s1",
+            "cgprfEngNm": null,
+            "syySmtDivNm": "2024-1학기",
+            "estblDeprtOrd": 40,
+            "subjtnbCorsePrcts": "YCA1003-04-00",
+            "subjtUnitVal": "1000",
+            "srclnLctreLangDivNm": null,
+            "cgprfNndsYn": "0",
+            "estblDeprtNm": "교양기초(2019학번~) 채플",
+            "subjtEngNm": "CHAPEL(3)",
+            "orgSysinstDivCd": "H1",
+            "lecrmEngNm": null,
+            "lessnSessnDivNm": "학기",
+            "subjtSbtlEngNm": null,
+            "attflUuid": null,
+            "cmptPrctsAmt": 0,
+            "tmtcYn": "0",
+            "subsrtDivNm": "교기",
+            "sysinstDivCd": "H1",
+            "lawscSubjcChrtzNm": null
+        },
+        {
+            "lawscSubjcgpNm": null,
+            "srclnLctreLangDivCd": null,
+            "coprtEstblYn": "0",
+            "smtDivCd": "10",
+            "lessnSessnDivCd": "A",
+            "lctreTimeNm": "수10",
+            "lawscSubjcFldNm": null,
+            "corseDvclsNo": "04",
+            "hy": "0,3,2,4,5",
+            "subsrtDivCd": "FP",
+            "subjtnb": "YCA1007",
+            "experPrctsAmt": 0,
+            "subjtSbtlNm": null,
+            "subjtClNm": "대면강의",
+            "campsDivNm": "신촌",
+            "syllaUnregTrgetDivCd": "0",
+            "subjtChngGudncDivCdTm": null,
+            "onppsPrttnAmt": 0,
+            "subjtChngGudncDivCdPl": null,
+            "gradeEvlMthdDivNm": "P/NP",
+            "cdt": 0.5,
+            "srclnLctreYn": "0",
+            "rcognHrs": 1,
+            "cgprfNm": null,
+            "subjtChngGudncDivCdPr": null,
+            "timtbDplctPermKindCd": "10",
+            "atntnMattrDesc": null,
+            "usubjtnb": "U00001",
+            "lctreTimeEngNm": "Wed10",
+            "rmvlcYn": "1",
+            "excstPercpFg": "0",
+            "subjtNm": "채플(C)",
+            "lecrmNm": null,
+            "rmvlcYnNm": "폐강",
+            "medcHyLisup": null,
+            "gradeEvlMthdDivCd": "3",
+            "estblDeprtCd": "30105",
+            "subjtNm2": "채플(C)",
+            "syy": "2024",
+            "prctsCorseDvclsNo": "00",
+            "campsBusnsCd": "s1",
+            "cgprfEngNm": null,
+            "syySmtDivNm": "2024-1학기",
+            "estblDeprtOrd": 40,
+            "subjtnbCorsePrcts": "YCA1007-04-00",
+            "subjtUnitVal": "1000",
+            "srclnLctreLangDivNm": null,
+            "cgprfNndsYn": "0",
+            "estblDeprtNm": "교양기초(2019학번~) 채플",
+            "subjtEngNm": "CHAPEL(C)",
+            "orgSysinstDivCd": "H1",
+            "lecrmEngNm": null,
+            "lessnSessnDivNm": "학기",
+            "subjtSbtlEngNm": null,
+            "attflUuid": null,
+            "cmptPrctsAmt": 0,
+            "tmtcYn": "0",
+            "subsrtDivNm": "교기",
+            "sysinstDivCd": "H1",
+            "lawscSubjcChrtzNm": null
+        },
+        {
+            "lawscSubjcgpNm": null,
+            "srclnLctreLangDivCd": null,
+            "coprtEstblYn": "0",
+            "smtDivCd": "10",
+            "lessnSessnDivCd": "A",
+            "lctreTimeNm": "일1",
+            "lawscSubjcFldNm": null,
+            "corseDvclsNo": "02",
+            "hy": "0,2,3,4,5",
+            "subsrtDivCd": "FP",
+            "subjtnb": "YCA1003",
+            "experPrctsAmt": 0,
+            "subjtSbtlNm": "(비대면)",
+            "subjtClNm": "비대면(동영상) ",
+            "campsDivNm": "신촌",
+            "syllaUnregTrgetDivCd": "0",
+            "subjtChngGudncDivCdTm": null,
+            "onppsPrttnAmt": 0,
+            "subjtChngGudncDivCdPl": null,
+            "gradeEvlMthdDivNm": "P/NP",
+            "cdt": 0,
+            "srclnLctreYn": "0",
+            "rcognHrs": 1,
+            "cgprfNm": "정미현,김동환",
+            "subjtChngGudncDivCdPr": "1",
+            "timtbDplctPermKindCd": "10",
+            "atntnMattrDesc": "초과학기생 수강가능",
+            "usubjtnb": "U00001",
+            "lctreTimeEngNm": "Sun1",
+            "rmvlcYn": "0",
+            "excstPercpFg": "0",
+            "subjtNm": "채플(3)(비대면)",
+            "lecrmNm": "동영상콘텐츠",
+            "rmvlcYnNm": " ",
+            "medcHyLisup": null,
+            "gradeEvlMthdDivCd": "3",
+            "estblDeprtCd": "30105",
+            "subjtNm2": "채플(3)",
+            "syy": "2024",
+            "prctsCorseDvclsNo": "00",
+            "campsBusnsCd": "s1",
+            "cgprfEngNm": "Chung Meehyun/Dong Hwan Kim",
+            "syySmtDivNm": "2024-1학기",
+            "estblDeprtOrd": 40,
+            "subjtnbCorsePrcts": "YCA1003-02-00",
+            "subjtUnitVal": "1000",
+            "srclnLctreLangDivNm": null,
+            "cgprfNndsYn": "0",
+            "estblDeprtNm": "교양기초(2019학번~) 채플",
+            "subjtEngNm": "CHAPEL(3)",
+            "orgSysinstDivCd": "H1",
+            "lecrmEngNm": "Pre-recorded lecture",
+            "lessnSessnDivNm": "학기",
+            "subjtSbtlEngNm": null,
+            "attflUuid": null,
+            "cmptPrctsAmt": 0,
+            "tmtcYn": "1",
+            "subsrtDivNm": "교기",
+            "sysinstDivCd": "H1",
+            "lawscSubjcChrtzNm": null
+        }
+      ]
     """.trimIndent()
 }

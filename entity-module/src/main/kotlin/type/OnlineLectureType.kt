@@ -18,7 +18,7 @@ enum class OnlineLectureType(vararg koreanCodes: String) {
         }
 
         fun allKoreanCodes(): List<String> {
-            return entries.flatMap{ it.koreanCodeArr.toList() }
+            return entries.flatMap { it.koreanCodeArr.toList() }
         }
     }
 }

@@ -2,8 +2,8 @@ package gitp.yonseiprotohttp.payload
 
 import gitp.scrapingbatch.dto.payload.DptGroupPayloadDto
 import gitp.scrapingbatch.dto.payload.DptPayloadDto
-import gitp.scrapingbatch.dto.payload.PayloadDto
 import gitp.scrapingbatch.dto.payload.LecturePayloadDto
+import gitp.scrapingbatch.dto.payload.PayloadDto
 
 object PayloadBuilder {
 

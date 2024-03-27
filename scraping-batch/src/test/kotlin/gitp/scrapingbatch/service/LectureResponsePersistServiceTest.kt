@@ -22,7 +22,7 @@ class LectureResponsePersistServiceTest @Autowired constructor(
     fun no_brain_test() {
         val objectMapper: ObjectMapper = MyUtils.getCommonObjectMapper()
 
-        val yonseiHttpClient = YonseiHttpClient.of<List<LectureResponseDto>>(
+        val yonseiHttpClient = YonseiHttpClient.of<LectureResponseDto>(
             YonseiUrlContainer.lectureUrl,
             objectMapper
         ) { jsonNode: JsonNode ->
@@ -37,7 +37,7 @@ class LectureResponsePersistServiceTest @Autowired constructor(
         )
 
         val dtoList: List<LectureResponseDto> =
-            yonseiHttpClient.retrieveAndMap(PayloadBuilder.toPayload(payloadDto))
+            yonseiHttpClient.retrieveAndMapToList(PayloadBuilder.toPayload(payloadDto))
 
         for (dto in dtoList) {
             lectureResponsePersistService.save(dto)

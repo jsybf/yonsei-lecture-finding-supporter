@@ -1,7 +1,5 @@
 package gitp.type
 
-import java.lang.IllegalStateException
-
 enum class Semester(val code: Int) {
     FIRST(10),
     SECOND(20);
@@ -9,7 +7,7 @@ enum class Semester(val code: Int) {
     companion object {
         fun codeOf(code: Int): Semester {
             for (entry in entries) {
-                if(entry.code == code) {
+                if (entry.code == code) {
                     return entry
                 }
             }
