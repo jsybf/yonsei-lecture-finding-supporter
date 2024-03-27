@@ -2,10 +2,12 @@ package gitp.scrapingbatch.batch.component
 
 import com.fasterxml.jackson.databind.JsonNode
 import gitp.entity.Dpt
+import gitp.entity.ObjectMappingError
 import gitp.scrapingbatch.dto.payload.LecturePayloadDto
 import gitp.scrapingbatch.dto.response.LectureResponseDto
 import gitp.scrapingbatch.exception.ResolutionException
 import gitp.scrapingbatch.repository.DptRepository
+import gitp.scrapingbatch.repository.ObjectMappingErrorRepository
 import gitp.scrapingbatch.request.YonseiHttpClient
 import gitp.scrapingbatch.request.YonseiObjectProducer
 import gitp.scrapingbatch.request.YonseiUrlContainer
@@ -30,7 +32,8 @@ open class LectureRequestAndPersistTasklet(
     private val year: Year,
     private val semester: Semester,
     private val dptRepository: DptRepository,
-    private val lectureResponsePersistService: LectureResponsePersistService
+    private val lectureResponsePersistService: LectureResponsePersistService,
+    private val objectMappingErrorRepository: ObjectMappingErrorRepository
 ) : Tasklet, StepExecutionListener {
     private val log: Logger = LoggerFactory.getLogger(LectureRequestAndPersistTasklet::class.java)
 
@@ -44,11 +47,7 @@ open class LectureRequestAndPersistTasklet(
 
     private var cursor: Long = 0L
 
-    // dptGroupCount is initialed not in construct-time but by beforeStep method
-    // since lateinit doesn't support val,I can't find solution to make it val
-    private var dptGroupCount: Long = 0
-
-    private val rawErrorJsonNodes: MutableList<String> = mutableListOf()
+    private val resolutionExceptionList: MutableList<ResolutionException> = mutableListOf()
     override fun execute(
         contribution: StepContribution, chunkContext: ChunkContext
     ): RepeatStatus? {
@@ -77,8 +76,8 @@ open class LectureRequestAndPersistTasklet(
                 lectureResponseDto = objectProducer.pop() ?: break
                 lectureResponsePersistService.save(lectureResponseDto)
             } catch (e: ResolutionException) {
-                // rawErrorJsonNodes.add(e.rawResponseJson!!)
-                log.warn("catch exception json excpetion:${e.message}")
+                resolutionExceptionList.add(e)
+                log.warn("object-mapping exception :${e.message}")
             }
         }
 
@@ -86,10 +85,19 @@ open class LectureRequestAndPersistTasklet(
     }
 
     override fun afterStep(stepExecution: StepExecution): ExitStatus? {
-        log.info("exception occured: ${rawErrorJsonNodes.size}")
-        rawErrorJsonNodes.forEach {
-            log.info("{}", it)
-        }
+        log.warn("failed object mapping for (${resolutionExceptionList.size})times")
+        resolutionExceptionList
+            .map {
+                ObjectMappingError(
+                    null,
+                    it.message!!,
+                    it.rawResponseJson!!,
+                    stepExecution.jobExecutionId
+                )
+            }
+            .forEach {
+                objectMappingErrorRepository.save(it)
+            }
 
         return ExitStatus.COMPLETED
     }

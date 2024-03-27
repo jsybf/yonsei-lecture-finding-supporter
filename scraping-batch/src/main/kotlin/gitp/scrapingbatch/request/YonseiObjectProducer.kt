@@ -32,7 +32,7 @@ class YonseiObjectProducer<T : DeserializableMarker>(
         try {
             return objectMapper.readValue(json.toString(), typeReference)
         } catch (e: ResolutionException) {
-            e.rawResponseJson = json.asText()
+            e.rawResponseJson = json.toString()
             throw e
         }
     }

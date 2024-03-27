@@ -5,6 +5,7 @@ import gitp.scrapingbatch.batch.component.DptRequestAndPersistTasklet
 import gitp.scrapingbatch.batch.component.LectureRequestAndPersistTasklet
 import gitp.scrapingbatch.repository.DptGroupRepository
 import gitp.scrapingbatch.repository.DptRepository
+import gitp.scrapingbatch.repository.ObjectMappingErrorRepository
 import gitp.scrapingbatch.service.LectureResponsePersistService
 import gitp.type.Semester
 import org.springframework.batch.core.Job
@@ -107,6 +108,7 @@ class JobConfig {
         jobRepository: JobRepository,
         dptRepository: DptRepository,
         lectureResponsePersistService: LectureResponsePersistService,
+        objectMappingErrorRepository: ObjectMappingErrorRepository,
         transactionManager: PlatformTransactionManager
     ): Step {
         return StepBuilder("lectureRequestAndPersistStep", jobRepository)
@@ -115,7 +117,8 @@ class JobConfig {
                     Year.parse(year),
                     Semester.codeOf(semester.toInt()),
                     dptRepository,
-                    lectureResponsePersistService
+                    lectureResponsePersistService,
+                    objectMappingErrorRepository,
                 ), transactionManager
             )
             .build()
