@@ -9,7 +9,7 @@ import gitp.scrapingbatch.dto.response.LectureResponseDto
 import gitp.scrapingbatch.dto.response.ProfessorDto
 import gitp.scrapingbatch.request.objectmapper.resolver.Resolvers
 
-class LectureResponseObjectMapper :
+class LectureResponseDeserializer :
     StdDeserializer<LectureResponseDto>(LectureResponseDto::class.java) {
     override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?): LectureResponseDto {
         val jsonTree: JsonNode = p!!.codec.readTree<JsonNode>(p)
@@ -20,12 +20,17 @@ class LectureResponseObjectMapper :
             .split("-")
             .takeIf { it.size == 3 }
             ?: throw IllegalStateException("""lecture id's form should be "0000000"-"00"-"00" """)
+
         return LectureResponseDto(
             jsonTree.get("subjtNm").asText(),
-            ProfessorDto(
-                null,
-                jsonTree.get("cgprfNm").asText()
-            ),
+            jsonTree.get("cgprfNm").asText()
+                .split(",")
+                .map {
+                    ProfessorDto(
+                        null,
+                        it
+                    )
+                }.toList(),
             LectureIdDto(
                 null,
                 lectureIdList[0],

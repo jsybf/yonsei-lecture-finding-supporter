@@ -3,15 +3,14 @@ package gitp.entity
 import jakarta.persistence.*
 
 @Entity
-class Lecture(
+class LectureProfessorJunction(
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     val id: Long?,
 
-    @Column(length = 100)
-    val name: String,
+    @ManyToOne
+    val lecture: Lecture,
 
     @ManyToOne
-    val lectureId: LectureId
-
+    val professor: Professor
 ) {
 }

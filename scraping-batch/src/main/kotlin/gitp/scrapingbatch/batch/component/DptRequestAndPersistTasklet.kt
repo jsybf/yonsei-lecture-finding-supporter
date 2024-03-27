@@ -1,9 +1,6 @@
 package gitp.scrapingbatch.batch.component
 
-import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import gitp.entity.Dpt
 import gitp.entity.DptGroup
 import gitp.scrapingbatch.dto.payload.DptPayloadDto
@@ -11,6 +8,8 @@ import gitp.scrapingbatch.dto.response.DptResponseDto
 import gitp.scrapingbatch.repository.DptGroupRepository
 import gitp.scrapingbatch.repository.DptRepository
 import gitp.scrapingbatch.request.YonseiHttpClient
+import gitp.scrapingbatch.request.YonseiUrlContainer
+import gitp.scrapingbatch.utils.MyUtils
 import gitp.type.Semester
 import gitp.yonseiprotohttp.payload.PayloadBuilder
 import org.slf4j.Logger
@@ -31,13 +30,10 @@ open class DptRequestAndPersistTasklet(
     private val dptRepository: DptRepository,
 ) : Tasklet, StepExecutionListener {
     private val log: Logger = LoggerFactory.getLogger(DptRequestAndPersistTasklet::class.java)
-    private val requestUrl: String =
-        "https://underwood1.yonsei.ac.kr/sch/sles/SlescsCtr/findSchSlesHandbList.do"
 
-    private val client = YonseiHttpClient.of<List<DptResponseDto>>(
-        requestUrl,
-        ObjectMapper().registerKotlinModule()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    private val client = YonseiHttpClient.of<DptResponseDto>(
+        YonseiUrlContainer.dptUrl,
+        MyUtils.getCommonObjectMapper()
     ) { jsonNode: JsonNode ->
         jsonNode.path("dsFaclyCd")
     }
@@ -76,7 +72,7 @@ open class DptRequestAndPersistTasklet(
             )
         )
         // TODO: exception handling if response is empty or response code isn't 200
-        val responseDtoList: List<DptResponseDto> = client.retrieveAndMap(payloads)
+        val responseDtoList: List<DptResponseDto> = client.retrieveAndMapToList(payloads)
 
         // TODO: exception handling if jdbc throw exception
         for (dto in responseDtoList) {

@@ -7,4 +7,4 @@ data class DptGroupResponseDto(
     val dptGroupName: String,
     @JsonProperty(value = "deptCd")
     val dptGroupId: String
-)
+) : DeserializableMarker
