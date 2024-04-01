@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import gitp.scrapingbatch.dto.response.MileageResponseDto
+import gitp.type.Fraction
 import gitp.type.MajorType
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -38,7 +39,7 @@ class MileageResponseObjectMapperTest {
                     true,
                     2,
                     MajorType.MAJOR,
-                    Pair(40, 126),
+                    Fraction(40, 126),
                     1.0,
                     6,
                     true,
@@ -50,7 +51,7 @@ class MileageResponseObjectMapperTest {
                     true,
                     4,
                     MajorType.MAJOR,
-                    Pair(129, 126),
+                    Fraction(129, 126),
                     0.7222,
                     6,
                     ifFirstRegister = true,

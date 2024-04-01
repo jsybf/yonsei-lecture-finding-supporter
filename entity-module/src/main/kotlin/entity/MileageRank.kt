@@ -1,5 +1,6 @@
 package gitp.entity
 
+import gitp.type.Fraction
 import gitp.type.MajorType
 import jakarta.persistence.*
 
@@ -16,7 +17,12 @@ class MileageRank(
     val mileage: Int,
     val ifSucceed: Boolean,
     val grade: Int,
-    val totalCreditRatio: Pair<Int, Int>,
+    @Embedded
+    @AttributeOverrides(
+        AttributeOverride(name = "denominator", column = Column(name = "totalCredit")),
+        AttributeOverride(name = "numerator", column = Column(name = "currentCredit"))
+    )
+    val totalCreditRatio: Fraction,
     @Enumerated(value = EnumType.STRING)
     val major: MajorType,
     val lastSemesterCreditRatio: Double,

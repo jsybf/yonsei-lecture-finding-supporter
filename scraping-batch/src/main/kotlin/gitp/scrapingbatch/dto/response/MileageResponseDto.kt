@@ -2,6 +2,7 @@ package gitp.scrapingbatch.dto.response
 
 import gitp.entity.Lecture
 import gitp.entity.MileageRank
+import gitp.type.Fraction
 import gitp.type.MajorType
 
 data class MileageResponseDto(
@@ -10,7 +11,7 @@ data class MileageResponseDto(
     val ifSucceed: Boolean,
     val grade: Int,
     val major: MajorType,
-    val totalCreditRatio: Pair<Int, Int>,
+    val totalCreditRatio: Fraction,
     val lastSemesterCreditRatio: Double,
     val appliedLectureNum: Int,
     val ifFirstRegister: Boolean,

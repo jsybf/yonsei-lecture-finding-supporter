@@ -5,10 +5,7 @@ import gitp.scrapingbatch.dto.response.location.OfflineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.OnlineLectureLocationDto
 import gitp.scrapingbatch.dto.response.location.PeriodAndLocationDto
 import gitp.scrapingbatch.exception.ResolutionException
-import gitp.type.Day
-import gitp.type.MajorType
-import gitp.type.OnlineLectureType
-import gitp.type.YonseiBuilding
+import gitp.type.*
 
 object Resolvers {
     fun splitPeriod(raw: String): List<String> =
@@ -180,7 +177,7 @@ object Resolvers {
         }
     }
 
-    fun resolveTotalCreditRatio(raw: String): Pair<Int, Int> {
+    fun resolveTotalCreditRatio(raw: String): Fraction {
         val expectedForm: Regex = Regex(
             """(?<currentCredit>[0-9]+)/(?<graduateCredit>[0-9]+)"""
         )
@@ -190,7 +187,7 @@ object Resolvers {
             ?.groups
             ?: throw ResolutionException("unexpected form:($raw)"))
 
-        return Pair(
+        return Fraction(
             matchGroup["currentCredit"]!!.value.toInt(),
             matchGroup["graduateCredit"]!!.value.toInt()
         )
