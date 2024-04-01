@@ -1,9 +1,6 @@
 package gitp.scrapingbatch.batch.config
 
-import gitp.scrapingbatch.batch.component.DptGroupRequestAndPersistTasklet
-import gitp.scrapingbatch.batch.component.DptRequestAndPersistTasklet
-import gitp.scrapingbatch.batch.component.LectureRequestAndPersistTasklet
-import gitp.scrapingbatch.batch.component.MileageRankRequestAndPersistTasklet
+import gitp.scrapingbatch.batch.component.*
 import gitp.scrapingbatch.repository.*
 import gitp.scrapingbatch.service.LectureResponsePersistService
 import gitp.type.Semester
@@ -153,6 +150,42 @@ class JobConfig {
                     Semester.codeOf(semester.toInt()),
                     lectureRepository,
                     mileageRankRepository,
+                    objectMappingErrorRepository,
+                ), transactionManager
+            )
+            .build()
+    }
+
+    @Bean
+    fun mileageSummaryRequestAndPersistJob(
+        jobRepository: JobRepository,
+        mileageSummaryRequestAndPersistStep: Step
+    ): Job {
+        return JobBuilder("mileageSummaryRequestAndPersistJob", jobRepository)
+            .start(mileageSummaryRequestAndPersistStep)
+            .build()
+    }
+
+    @JobScope
+    @Bean
+    fun mileageSummaryRequestAndPersistStep(
+        @Value("#{jobParameters[year]}")
+        year: String,
+        @Value("#{jobParameters[semester]}")
+        semester: String,
+        jobRepository: JobRepository,
+        lectureRepository: LectureRepository,
+        mileageSummaryRepository: MileageSummaryRepository,
+        objectMappingErrorRepository: ObjectMappingErrorRepository,
+        transactionManager: PlatformTransactionManager
+    ): Step {
+        return StepBuilder("mileageSummaryRequestAndPersistStep", jobRepository)
+            .tasklet(
+                MileageSummaryRequestAndPersistTasklet(
+                    Year.parse(year),
+                    Semester.codeOf(semester.toInt()),
+                    lectureRepository,
+                    mileageSummaryRepository,
                     objectMappingErrorRepository,
                 ), transactionManager
             )
