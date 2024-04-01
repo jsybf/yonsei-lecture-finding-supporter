@@ -74,8 +74,8 @@ class YonseiObjectMapper<T : DeserializableMarker>(
         try {
             return objectMapper.readValue(
                 refineJson(json).toString(),
-                typeReference
-            )
+                listTypeReference
+            )[0]
         } catch (e: ResolutionException) {
             e.rawResponseJson = json
             throw e

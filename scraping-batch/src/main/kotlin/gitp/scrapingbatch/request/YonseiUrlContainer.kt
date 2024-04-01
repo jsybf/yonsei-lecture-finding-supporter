@@ -9,4 +9,6 @@ object YonseiUrlContainer {
         "https://underwood1.yonsei.ac.kr/sch/sles/SlessyCtr/findAtnlcHandbList.do"
     const val mileageRankUrl: String =
         "https://underwood1.yonsei.ac.kr/sch/sles/SlessyCtr/findMlgRankResltList.do"
+    const val mileageSummaryUrl: String =
+        "https://underwood1.yonsei.ac.kr/sch/sles/SlessyCtr/findMlgAppcsResltList.do"
 }
