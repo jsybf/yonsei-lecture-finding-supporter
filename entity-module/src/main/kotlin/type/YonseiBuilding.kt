@@ -10,6 +10,7 @@ enum class YonseiBuilding(val koreanCode: String) {
     SCIENCE("과"),
     SCIENCE_S("과S"),
     ENGINEERING_A("공A"),
+    ENGINEERING_A_S("공AS"),
     ENGINEERING_B("공B"),
     ENGINEERING_C("공C"),
     ENGINEERING_D("공D"),
@@ -31,7 +32,7 @@ enum class YonseiBuilding(val koreanCode: String) {
     RUISE("루"),
     WONHUI("원"),
     SAECHEON("새천"),
-    SEOKSANHALL("석산홀세미나");
+    SEOKSANHALL("석산홀세미나실");
 
     companion object {
         fun of(koreanCode: String): YonseiBuilding {

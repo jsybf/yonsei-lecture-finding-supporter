@@ -99,7 +99,7 @@ object Resolvers {
     fun resolveLocation(raw: String): List<LectureLocationDto> {
         val ifOnlyKorean = Regex("""^[가-힣]+$""")
         val commonAddress = Regex(
-            """(?<buildingName>[가-힣]+)(?<buildingNameOrB>[A-Z]?)(?<address>[0-9]{2,3})"""
+            """(?<buildingName>[가-힣]+)(?<buildingNameOrB>[A-Z]{0,2})(?<address>[0-9]{2,3})"""
         )
 
         val locationChunkList: List<String> = splitLocation(raw)
@@ -121,6 +121,8 @@ object Resolvers {
                             !chunk.contains(Regex("""중복수강불가"""))
                         )
                     )
+
+                    continue
                 }
 
 
@@ -152,6 +154,8 @@ object Resolvers {
                             address
                         )
                     )
+
+                    continue
                 }
 
                 ifOnlyKorean.matches(chunk) -> {
@@ -161,6 +165,7 @@ object Resolvers {
                             "000"
                         )
                     )
+                    continue
                 }
 
                 else -> throw ResolutionException("(input:$chunk) doesn't matched cases")
