@@ -37,6 +37,12 @@ object DefaultPayloadContainer {
         "%40d1%23stuno" to ""
     )
 
+    val mileagePayload: Map<String, String> = mapOf(
+        "%40d1%23stuno" to "",
+        "%40d1%23sysinstDivCd" to "H1",
+        "%40d1%23appcsSchdlCd" to ""
+    )
+
     val commonPayload: Map<String, String> = mapOf(
         "_menuId" to "MTA5MzM2MTI3MjkzMTI2NzYwMDA%3D",
         "_menuNm" to "",

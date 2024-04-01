@@ -27,7 +27,7 @@ class YonseiObjectProducer<T : DeserializableMarker>(
         }
     }
 
-    fun  pop(): T? {
+    fun pop(): T? {
         val json: JsonNode = jsonQueue.poll() ?: return null
         try {
             return objectMapper.readValue(json.toString(), typeReference)

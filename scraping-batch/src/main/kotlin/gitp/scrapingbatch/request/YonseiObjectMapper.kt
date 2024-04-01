@@ -95,7 +95,7 @@ class YonseiObjectMapper<T : DeserializableMarker>(
 
     }
 
-    fun getObjectProducer(json: String): YonseiObjectProducer<*> {
+    fun getObjectProducer(json: String): YonseiObjectProducer<out DeserializableMarker> {
         return YonseiObjectProducer(
             LinkedList<JsonNode>(refineJson(json).toList()) as Queue<JsonNode>,
             typeReference,

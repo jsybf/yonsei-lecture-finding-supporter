@@ -67,7 +67,7 @@ class YonseiHttpClient<T : DeserializableMarker>(
         return yonseiObjectMapper.mapList(response)
     }
 
-    fun retrieveAndGetObjectProducer(payloads: String): YonseiObjectProducer<*> {
+    fun retrieveAndGetObjectProducer(payloads: String): YonseiObjectProducer<out DeserializableMarker> {
         val response: String = retrieve(payloads)
         return yonseiObjectMapper.getObjectProducer(response)
     }
