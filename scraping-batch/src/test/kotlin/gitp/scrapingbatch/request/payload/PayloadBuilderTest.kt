@@ -6,7 +6,6 @@ import gitp.type.Semester
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import java.time.Year
-import kotlin.math.exp
 
 class PayloadBuilderTest {
 

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import gitp.scrapingbatch.dto.payload.MileageSummaryPayloadDto
 import gitp.scrapingbatch.dto.response.LectureResponseDto
 import gitp.scrapingbatch.dto.response.MileageResponseDto
 import gitp.scrapingbatch.dto.response.MileageSummaryDto

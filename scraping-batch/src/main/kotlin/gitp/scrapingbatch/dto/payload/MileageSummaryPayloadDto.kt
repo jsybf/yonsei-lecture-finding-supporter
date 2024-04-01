@@ -1,6 +1,5 @@
 package gitp.scrapingbatch.dto.payload
 
-import gitp.entity.LectureId
 import gitp.scrapingbatch.dto.response.LectureIdDto
 import gitp.type.Semester
 import java.time.Year
@@ -9,7 +8,7 @@ data class MileageSummaryPayloadDto(
     val year: Year,
     val semester: Semester,
     val lectureId: LectureIdDto
-): PayloadDto {
+) : PayloadDto {
     override fun toMap(): Map<String, String> {
         return mapOf(
             "%40d1%23syy" to year.toString(),

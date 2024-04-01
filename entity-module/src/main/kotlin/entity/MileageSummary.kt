@@ -22,7 +22,7 @@ class MileageSummary(
     private var grade6Limit: Int,
 ) {
     fun setLimitOfGrade(grade: Int, limit: Int) {
-        return when(grade) {
+        return when (grade) {
             1 -> grade1Limit = limit
             2 -> grade2Limit = limit
             3 -> grade3Limit = limit
@@ -32,8 +32,9 @@ class MileageSummary(
             else -> throw IllegalArgumentException("grade should be in range 1 <= grade <= 6")
         }
     }
+
     fun getLimitOfGrade(grade: Int): Int {
-        return when(grade) {
+        return when (grade) {
             1 -> grade1Limit
             2 -> grade2Limit
             3 -> grade3Limit
