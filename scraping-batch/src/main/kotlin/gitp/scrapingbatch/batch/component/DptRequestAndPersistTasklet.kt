@@ -26,6 +26,8 @@ import java.time.Year
 
 
 open class DptRequestAndPersistTasklet(
+    private val year: Year,
+    private val semester: Semester,
     private val dptGroupRepository: DptGroupRepository,
     private val dptRepository: DptRepository,
 ) : Tasklet, StepExecutionListener {
@@ -59,6 +61,7 @@ open class DptRequestAndPersistTasklet(
         if (dptGroupCount == cursor) {
             return RepeatStatus.FINISHED
         }
+
         val dptGroup: DptGroup = (dptGroupRepository.findByIdOrNull(++cursor)
             ?: throw NoSuchElementException("cant find id with $cursor"))
 
@@ -67,8 +70,8 @@ open class DptRequestAndPersistTasklet(
         val payloads = PayloadBuilder.toPayload(
             DptPayloadDto(
                 dptGroup.dptGroupId,
-                Year.of(2024),
-                Semester.FIRST
+                year,
+                semester
             )
         )
         // TODO: exception handling if response is empty or response code isn't 200

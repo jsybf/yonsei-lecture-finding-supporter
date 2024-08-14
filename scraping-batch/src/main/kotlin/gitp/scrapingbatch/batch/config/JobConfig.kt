@@ -76,6 +76,8 @@ class JobConfig {
         return StepBuilder("dptRequestAndPersistStep", jobRepository)
             .tasklet(
                 DptRequestAndPersistTasklet(
+                    Year.parse(year),
+                    Semester.codeOf(semester.toInt()),
                     dptGroupRepository,
                     dptRepository
                 ), transactionManager
