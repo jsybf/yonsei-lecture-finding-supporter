@@ -1,6 +1,10 @@
 package org.example
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.mongodb.ConnectionString
+import com.mongodb.kotlin.client.MongoClient
+import com.mongodb.kotlin.client.MongoCollection
+import com.mongodb.kotlin.client.MongoDatabase
 import gitp.scrapingbatch.dto.payload.DptGroupPayloadDto
 import gitp.scrapingbatch.dto.payload.DptPayloadDto
 import gitp.scrapingbatch.dto.payload.LecturePayloadDto
@@ -11,6 +15,10 @@ import gitp.scrapingbatch.request.YonseiUrlContainer
 import gitp.scrapingbatch.utils.MyUtils
 import gitp.type.Semester
 import gitp.yonseiprotohttp.payload.PayloadBuilder
+import org.bson.BsonType
+import org.bson.codecs.pojo.annotations.BsonId
+import org.bson.codecs.pojo.annotations.BsonRepresentation
+import org.bson.types.ObjectId
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Year
@@ -44,8 +52,8 @@ val syllabusClient = YonseiHttpClient.of<SyllabusResponseDto>(
 fun requestSimpleLecture(dptGroupId: String, dptId: String, year: Year, semester: Semester): List<SimpleLectureResponseDto> {
     val payload: String = PayloadBuilder.toPayload(
         LecturePayloadDto(
-            Year.of(2024),
-            Semester.SECOND,
+            year,
+            semester,
             dptGroupId,
             dptId
         )
@@ -57,8 +65,8 @@ fun requestDpt(dptGroupId: String, year: Year, semester: Semester): List<DptResp
     val payload: String = PayloadBuilder.toPayload(
         DptPayloadDto(
             dptGroupId,
-            Year.of(2024),
-            Semester.SECOND
+            year,
+            semester,
         )
     )
 
@@ -68,27 +76,44 @@ fun requestDpt(dptGroupId: String, year: Year, semester: Semester): List<DptResp
 
 fun requestSyllabus(lectureResponseDto: SimpleLectureResponseDto, year: Year, semester: Semester): String {
     val payload: String = PayloadBuilder.toPayload(
-        SyllabusPayloadDto(Year.of(2024), Semester.SECOND, lectureResponseDto.lectureId, lectureResponseDto.name)
+        SyllabusPayloadDto(year, semester, lectureResponseDto.lectureId, lectureResponseDto.name)
     )
 
     return syllabusClient.retrieveAndMap(payload)?.content ?: ""
 }
 
+data class Syllabus(
+    @BsonId
+    @BsonRepresentation(BsonType.OBJECT_ID)
+    val id: String?,
+    val lectureCode: String,
+    val syllabus: String
+)
+
 fun main() {
     val logger: Logger = LoggerFactory.getLogger("main")
+    val year: Year = Year.of(2024)
+    val semester: Semester = Semester.SECOND
+
+    val hostUrl = "mongodb://43.201.1.128"
+    val connectionString: ConnectionString = ConnectionString(hostUrl)
+    val client = MongoClient.create(connectionString)
+    val database: MongoDatabase = client.getDatabase("everytime")
+    val collection: MongoCollection<Syllabus> = database.getCollection("syllabus")
 
     // 큰 분류
     val payloads = PayloadBuilder.toPayload(
         DptGroupPayloadDto(
-            Year.of(2024),
-            Semester.SECOND
+            year,
+            semester
         )
     )
     val dptGroupDtoList: List<DptGroupResponseDto> = dptGroupClient.retrieveAndMapToList(payloads)
+
     val lectureIdSyllabusPairList: MutableList<Pair<String, String>> = mutableListOf()
-    val year: Year = Year.of(2024)
-    val semester: Semester = Semester.SECOND
-    for (dptGroup in dptGroupDtoList.slice(0..4)) {
+
+
+    for (dptGroup in dptGroupDtoList.slice(0..19)) {
         val dptList: List<DptResponseDto> = requestDpt(dptGroup.dptGroupId, year, semester)
         logger.info("complete requesting dpt of dpt group:[${dptGroup.dptGroupName}]")
 
@@ -105,56 +130,23 @@ fun main() {
 
         if (syllabusList.size != lectureList.size)
             throw IllegalStateException("size of syllabusList should be same with size of lectureResponseDtoList")
-        val map: List<Pair<String, String>> = lectureList
+        val map: List<Syllabus> = lectureList
             .zip(syllabusList)
-            .map { "${it.first.lectureId.mainId}-${it.first.lectureId.classDivisionId}-00" to (it.second) }
-        lectureIdSyllabusPairList += map
+            .map {
+                Syllabus(
+                    null,
+                    "${it.first.lectureId.mainId}-${it.first.lectureId.classDivisionId}-00",
+                    it.second
+                )
+            }
+        if(map.isEmpty())
+            continue
+        collection.insertMany(map)
     }
-    // for (dptGroup in dptGroupDtoList.slice(1..1)) {
-    //     val dptPayload: String = PayloadBuilder.toPayload(
-    //         DptPayloadDto(
-    //             dptGroup.dptGroupId,
-    //             Year.of(2024),
-    //             Semester.SECOND
-    //         )
-    //     )
-    //
-    //     val lectureResponseDtoList: List<SimpleLectureResponseDto> = dptClient.retrieveAndMapToList(dptPayload)
-    //         .map {
-    //             PayloadBuilder.toPayload(
-    //                 LecturePayloadDto(
-    //                     Year.of(2024),
-    //                     Semester.SECOND,
-    //                     dptGroup.dptGroupId,
-    //                     it.dptId
-    //                 )
-    //             )
-    //         }
-    //         .map { lectureClient2.retrieveAndMapToList(it) }
-    //         .flatten()
-    //     println("requesting lecture complete")
-    //
-    //     val syllabusList: List<SyllabusResponseDto> = lectureResponseDtoList
-    //         .map {
-    //             PayloadBuilder.toPayload(
-    //                 SyllabusPayloadDto(Year.of(2024), Semester.SECOND, it.lectureId, it.name)
-    //             )
-    //         }
-    //         .map { syllabusClient.retrieveAndMap(it) }
-    //     println("requesting syllabus complete")
-    //
-    //     if (syllabusList.size != lectureResponseDtoList.size)
-    //         throw IllegalStateException("size of syllabusList should be same with size of lectureResponseDtoList")
-    //     val map: List<Pair<String, String>> = lectureResponseDtoList
-    //         .zip(syllabusList)
-    //         .map { "${it.first.lectureId.mainId}-${it.first.lectureId.subId}-00" to (it?.second?.content ?: "") }
-    //     lectureIdSyllabusPairList += map
-    // }
-    // 개별 강의
+
     lectureIdSyllabusPairList.forEach {
         println()
         println(it)
         println()
     }
-    println("Hello World!")
 }
