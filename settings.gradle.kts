@@ -5,3 +5,4 @@ plugins {
 rootProject.name = "yonsei-lecture-finding-supporter"
 include("scraping-batch")
 include("entity-module")
+include("lecture-content")
