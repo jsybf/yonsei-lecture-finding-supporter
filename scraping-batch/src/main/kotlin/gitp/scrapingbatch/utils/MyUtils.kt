@@ -4,12 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
-import gitp.scrapingbatch.dto.response.LectureResponseDto
-import gitp.scrapingbatch.dto.response.MileageResponseDto
-import gitp.scrapingbatch.dto.response.MileageSummaryDto
-import gitp.scrapingbatch.request.objectmapper.LectureResponseDeserializer
-import gitp.scrapingbatch.request.objectmapper.MileageResponseObjectMapper
-import gitp.scrapingbatch.request.objectmapper.MileageSummaryDeserializer
+import gitp.scrapingbatch.dto.response.*
+import gitp.scrapingbatch.request.objectmapper.*
 
 object MyUtils {
     fun getCommonObjectMapper(): ObjectMapper {
@@ -29,6 +25,14 @@ object MyUtils {
                     .addDeserializer(
                         MileageSummaryDto::class.java,
                         MileageSummaryDeserializer()
+                    )
+                    .addDeserializer(
+                        SimpleLectureResponseDto::class.java,
+                        SimpleLectureDeserializer()
+                    )
+                    .addDeserializer(
+                        SyllabusResponseDto::class.java,
+                        SyllabusResponseDeserializer()
                     )
             )
     }

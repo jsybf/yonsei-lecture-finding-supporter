@@ -47,6 +47,10 @@ object DefaultPayloadContainer {
         "%40d1%23sysinstDivCd" to "H1",
     )
 
+    val syllabusPayload: Map<String, String> = mapOf(
+        "%40d1%23sysinstDivCd" to "H1",
+    )
+
     val commonPayload: Map<String, String> = mapOf(
         "_menuId" to "MTA5MzM2MTI3MjkzMTI2NzYwMDA%3D",
         "_menuNm" to "",

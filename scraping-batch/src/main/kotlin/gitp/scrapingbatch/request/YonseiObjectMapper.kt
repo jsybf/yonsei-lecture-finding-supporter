@@ -59,6 +59,11 @@ class YonseiObjectMapper<T : DeserializableMarker>(
         }
     }
 
+    /**
+     * TODO: 오류 수정
+     * refineJson이 json array가 올것을 가정하고 filtering을 하고 있다.
+     * 한개의 json이 refineJson으로 들어갈때는 첫번째 필드만 리턴해보린다.
+     */
     fun refineJson(rawJson: String): ArrayNode {
         val json: JsonNode = objectMapper.readTree(rawJson)
         return (postDeserialize?.invoke(json) ?: json)

@@ -11,6 +11,7 @@ object PayloadBuilder {
             is LecturePayloadDto -> DefaultPayloadContainer.lecturePayload
             is MileagePayloadDto -> DefaultPayloadContainer.mileagePayload
             is MileageSummaryPayloadDto -> DefaultPayloadContainer.mileageSummaryPayload
+            is SyllabusPayloadDto-> DefaultPayloadContainer.syllabusPayload
             else -> {
                 throw IllegalArgumentException("type of dto: ${dto::class}")
             }
